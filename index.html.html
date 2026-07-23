@@ -1,0 +1,1265 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0A0A0B">
+<title>Annetti Vannetti lernt Assyrisch</title>
+<style>
+:root{
+  --bg:#0A0A0B; --panel:#141416; --panel2:#1B1B1E; --line:#2A2A2F;
+  --ink:#F3F1ED; --muted:#8B8B92; --gold:#E0B355; --gold-dim:#7A6230;
+  --blue:#3C6FB4; --red:#C0433F; --green:#4E9A6A;
+  --sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Roboto Mono",monospace;
+  --tap:44px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);
+  font-size:16px;line-height:1.45;-webkit-font-smoothing:antialiased;
+  padding-bottom:calc(64px + env(safe-area-inset-bottom))}
+button,input,select{font-family:inherit;font-size:inherit;color:inherit}
+button{cursor:pointer;border:none;background:none}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:4px}
+
+/* ---------- Kopf ---------- */
+header{position:sticky;top:0;z-index:20;background:rgba(10,10,11,.92);
+  backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.hd{max-width:640px;margin:0 auto;padding:12px 18px calc(12px + env(safe-area-inset-top)) 18px;
+  display:flex;align-items:center;justify-content:space-between;gap:12px}
+.mark{font-size:15px;font-weight:700;letter-spacing:-.02em;line-height:1.15}
+.mark b{display:block;font-size:10px;font-weight:500;letter-spacing:.22em;
+  text-transform:uppercase;color:var(--gold);font-family:var(--mono)}
+.hd-right{display:flex;align-items:center;gap:14px;font-family:var(--mono);font-size:12px;color:var(--muted)}
+.hd-right .v{color:var(--ink)}
+.lockbtn{width:34px;height:34px;border:1px solid var(--line);border-radius:8px;color:var(--muted);
+  display:grid;place-items:center;font-size:14px}
+
+main{max-width:640px;margin:0 auto;padding:20px 18px 40px}
+
+/* ---------- Bausteine ---------- */
+.eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+h1{font-size:26px;line-height:1.15;letter-spacing:-.03em;margin:6px 0 18px;font-weight:700}
+h2{font-size:15px;margin:26px 0 10px;font-weight:600;letter-spacing:-.01em}
+p{margin:0 0 12px}
+.sub{color:var(--muted);font-size:14px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px}
+.panel+.panel{margin-top:10px}
+.row{display:flex;align-items:center;gap:12px}
+.spread{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.tr{font-family:var(--mono);color:var(--gold)}
+.mut{color:var(--muted)}
+.hide{display:none!important}
+
+.btn{display:block;width:100%;min-height:var(--tap);background:var(--gold);color:#17140C;
+  border-radius:12px;padding:13px 18px;font-weight:700;font-size:16px;letter-spacing:-.01em;text-align:center}
+.btn:active{transform:translateY(1px)}
+.btn[disabled]{background:var(--panel2);color:var(--muted);cursor:not-allowed;transform:none}
+.btn.ghost{background:none;border:1px solid var(--line);color:var(--ink);font-weight:600}
+.btn.quiet{background:none;color:var(--muted);font-weight:500;font-size:14px;min-height:0;padding:10px}
+.btn.danger{background:none;border:1px solid var(--red);color:var(--red);font-weight:600}
+.btn-row{display:flex;gap:10px;margin-top:10px}
+.btn-row .btn{flex:1}
+.chip{min-height:38px;border:1px solid var(--line);border-radius:999px;padding:8px 14px;
+  font-size:13px;color:var(--muted);white-space:nowrap;background:var(--panel)}
+.chip.on{background:var(--ink);border-color:var(--ink);color:var(--bg);font-weight:600}
+.scroller{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin:0 -18px 14px;padding-left:18px;padding-right:18px;
+  scrollbar-width:none}
+.scroller::-webkit-scrollbar{display:none}
+
+/* ---------- Heute ---------- */
+.streak{display:flex;gap:10px;margin-bottom:14px}
+.stat{flex:1;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px}
+.stat .n{font-family:var(--mono);font-size:24px;font-weight:600;letter-spacing:-.02em;line-height:1}
+.stat .l{font-size:11px;color:var(--muted);margin-top:6px;letter-spacing:.04em}
+.bar{height:6px;background:var(--panel2);border-radius:99px;overflow:hidden;margin-top:12px}
+.bar i{display:block;height:100%;background:var(--gold);border-radius:99px;transition:width .5s ease}
+.bar.blue i{background:var(--blue)}
+
+/* ---------- Kurspfad ---------- */
+.chapter{margin-bottom:22px}
+.ch-head{display:flex;align-items:baseline;gap:10px;margin-bottom:10px}
+.ch-num{font-family:var(--mono);font-size:11px;color:var(--gold-dim)}
+.ch-title{font-weight:650;font-size:15px;letter-spacing:-.01em}
+.path{position:relative;padding-left:26px}
+.path:before{content:"";position:absolute;left:7px;top:12px;bottom:12px;width:1px;background:var(--line)}
+.node{position:relative;display:flex;align-items:center;gap:12px;width:100%;text-align:left;
+  padding:12px 14px;margin-bottom:8px;background:var(--panel);border:1px solid var(--line);border-radius:12px;min-height:var(--tap)}
+.node:before{content:"";position:absolute;left:-23px;top:50%;transform:translateY(-50%);
+  width:9px;height:9px;border-radius:99px;background:var(--bg);border:1px solid var(--line)}
+.node.done:before{background:var(--gold);border-color:var(--gold)}
+.node.next{border-color:var(--gold)}
+.node.next:before{border-color:var(--gold)}
+.node .t{flex:1;font-size:14px;font-weight:550}
+.node .m{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.node.locked{opacity:.45}
+
+/* ---------- Lernkarte ---------- */
+.stage{background:var(--panel);border:1px solid var(--line);border-radius:16px;
+  padding:30px 20px;text-align:center;min-height:260px;display:flex;flex-direction:column;
+  justify-content:center;gap:18px;animation:pop .25s ease both}
+@keyframes pop{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.stage .de{font-size:27px;font-weight:700;letter-spacing:-.025em;line-height:1.2}
+.stage .say{font-family:var(--mono);font-size:31px;color:var(--gold);letter-spacing:-.01em;
+  line-height:1.25;word-break:break-word}
+.stage .say.sm{font-size:22px}
+.stage .hint{font-size:13px;color:var(--muted)}
+.audio-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.abtn{min-height:var(--tap);border:1px solid var(--line);border-radius:11px;padding:11px 16px;
+  font-size:14px;color:var(--ink);background:var(--panel2);display:inline-flex;align-items:center;gap:7px}
+.abtn.live{background:var(--red);border-color:var(--red);color:#fff}
+.abtn[disabled]{opacity:.35;cursor:not-allowed}
+.progress-top{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.progress-top .bar{flex:1;margin:0}
+.x{width:34px;height:34px;border:1px solid var(--line);border-radius:9px;color:var(--muted);flex:0 0 auto}
+
+/* ---------- Quiz ---------- */
+.opts{display:grid;gap:8px;margin-top:16px}
+.opt{min-height:var(--tap);text-align:left;padding:14px 16px;background:var(--panel);
+  border:1px solid var(--line);border-radius:12px;font-size:15px;display:flex;justify-content:space-between;gap:10px}
+.opt .k{font-family:var(--mono);color:var(--gold)}
+.opt.right{border-color:var(--green);background:rgba(78,154,106,.12)}
+.opt.wrong{border-color:var(--red);background:rgba(192,67,63,.12)}
+.opt[disabled]{cursor:default}
+.answer{width:100%;min-height:var(--tap);background:var(--panel);border:1px solid var(--line);
+  border-radius:12px;padding:13px 15px;font-family:var(--mono);font-size:17px;color:var(--gold)}
+.verdict{margin-top:14px;padding:14px 16px;border-radius:12px;font-size:14px}
+.verdict.ok{background:rgba(78,154,106,.12);border:1px solid var(--green)}
+.verdict.no{background:rgba(192,67,63,.12);border:1px solid var(--red)}
+.verdict b{font-family:var(--mono);color:var(--gold);font-weight:400}
+
+/* ---------- Listen ---------- */
+.item{display:flex;align-items:center;gap:12px;padding:13px 14px;border-bottom:1px solid var(--line)}
+.item:last-child{border-bottom:none}
+.item .txt{flex:1;min-width:0}
+.item .de{font-size:14.5px;font-weight:550}
+.item .say{font-family:var(--mono);font-size:13px;color:var(--gold);margin-top:2px;word-break:break-word}
+.icon{width:38px;height:38px;flex:0 0 auto;border:1px solid var(--line);border-radius:9px;
+  color:var(--muted);display:grid;place-items:center;font-size:13px;background:var(--panel2)}
+.icon.on{color:var(--gold);border-color:var(--gold-dim)}
+.icon.rec{background:var(--red);border-color:var(--red);color:#fff}
+.list{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.dot{width:6px;height:6px;border-radius:99px;background:var(--line);flex:0 0 auto}
+.dot.on{background:var(--gold)}
+
+.field{width:100%;min-height:var(--tap);background:var(--panel2);border:1px solid var(--line);
+  border-radius:10px;padding:12px 14px;font-size:15px;margin-bottom:8px}
+.field.mono{font-family:var(--mono);color:var(--gold)}
+label.lb{display:block;font-size:12px;color:var(--muted);margin:10px 0 5px}
+
+.dlg{display:flex;flex-direction:column;gap:10px}
+.bubble{max-width:86%;padding:12px 14px;border-radius:14px;background:var(--panel2);border:1px solid var(--line)}
+.bubble.b{align-self:flex-end;background:rgba(224,179,85,.09);border-color:var(--gold-dim)}
+.bubble .de{font-size:14.5px}
+.bubble .say{font-family:var(--mono);font-size:13.5px;color:var(--gold);margin-top:3px}
+
+.note{border:1px solid var(--gold-dim);background:rgba(224,179,85,.07);border-radius:12px;
+  padding:12px 14px;font-size:13px;line-height:1.5;margin-bottom:14px;color:#E8DFCB}
+.note.warn{border-color:var(--red);background:rgba(192,67,63,.08);color:#F0D2D1}
+
+.badge{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:99px;
+  padding:6px 11px;font-size:12px;color:var(--muted);font-family:var(--mono)}
+.badge.on{border-color:var(--gold-dim);color:var(--gold)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+
+/* ---------- Tableiste ---------- */
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:20;background:rgba(10,10,11,.94);
+  backdrop-filter:blur(12px);border-top:1px solid var(--line);
+  padding-bottom:env(safe-area-inset-bottom)}
+.tabs-in{max-width:640px;margin:0 auto;display:flex}
+.tab{flex:1;min-height:56px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:3px;color:var(--muted);font-size:10.5px;letter-spacing:.03em}
+.tab .g{font-size:16px;line-height:1}
+.tab.on{color:var(--gold)}
+.tab.on .g{transform:translateY(-1px)}
+
+.sheet{position:fixed;inset:0;z-index:40;background:rgba(6,6,7,.75);display:flex;align-items:flex-end}
+.sheet-in{width:100%;max-width:640px;margin:0 auto;background:var(--panel);
+  border-top-left-radius:18px;border-top-right-radius:18px;border:1px solid var(--line);
+  padding:20px 18px calc(24px + env(safe-area-inset-bottom));max-height:88vh;overflow:auto;
+  animation:up .22s ease both}
+@keyframes up{from{transform:translateY(14px);opacity:0}to{transform:none;opacity:1}}
+
+/* ---------- Begrüßung ---------- */
+.hello{position:fixed;inset:0;z-index:60;background:var(--bg);display:grid;place-items:center;
+  padding:32px 26px;text-align:center}
+.hello.go{animation:fade .5s ease both}
+@keyframes fade{to{opacity:0;visibility:hidden}}
+.hello-in{max-width:440px;animation:rise .6s ease both}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.hello-mark{font-size:13px;letter-spacing:.24em;text-transform:uppercase;color:var(--gold);
+  font-family:var(--mono);margin-bottom:22px}
+.hello-text{font-size:22px;line-height:1.45;font-weight:650;letter-spacing:-.02em;margin:0 0 30px}
+.hello-bar{height:3px;background:var(--panel2);border-radius:99px;overflow:hidden;max-width:200px;margin:0 auto}
+.hello-bar i{display:block;height:100%;background:var(--gold);width:0;animation:fill 4s linear both}
+@keyframes fill{to{width:100%}}
+
+/* ---------- Aufnahme ---------- */
+.recbox{border:1px solid var(--line);border-radius:14px;padding:16px;background:var(--panel2);margin-top:4px}
+.recbox.live{border-color:var(--red);background:rgba(192,67,63,.10)}
+.recbox.have{border-color:var(--gold-dim)}
+.rec-state{display:flex;align-items:center;justify-content:center;gap:9px;font-size:14px;
+  font-weight:600;margin-bottom:12px}
+.rec-state .blob{width:11px;height:11px;border-radius:99px;background:var(--muted);flex:0 0 auto}
+.recbox.live .rec-state{color:var(--red)}
+.recbox.live .blob{background:var(--red);animation:beat 1s ease-in-out infinite}
+.recbox.have .rec-state{color:var(--gold)}
+.recbox.have .blob{background:var(--gold)}
+@keyframes beat{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.45);opacity:.55}}
+.rec-time{font-family:var(--mono);font-size:26px;letter-spacing:.02em;text-align:center;margin-bottom:12px}
+.recbox.live .rec-time{color:var(--red)}
+.rec-big{width:100%;min-height:52px;border-radius:12px;font-size:16px;font-weight:700;
+  background:var(--red);color:#fff;display:flex;align-items:center;justify-content:center;gap:9px}
+.rec-big.stop{background:#fff;color:#17140C}
+.rec-big .sq{width:13px;height:13px;background:currentColor;border-radius:2px}
+.rec-big .ci{width:13px;height:13px;background:currentColor;border-radius:99px}
+.rec-hint{text-align:center;font-size:12.5px;color:var(--muted);margin-top:10px}
+.wave{display:flex;align-items:flex-end;justify-content:center;gap:3px;height:26px;margin-bottom:12px}
+.wave i{width:3px;background:var(--red);border-radius:2px;height:20%;animation:w .9s ease-in-out infinite}
+.wave i:nth-child(2){animation-delay:.1s}.wave i:nth-child(3){animation-delay:.2s}
+.wave i:nth-child(4){animation-delay:.3s}.wave i:nth-child(5){animation-delay:.4s}
+.wave i:nth-child(6){animation-delay:.5s}.wave i:nth-child(7){animation-delay:.6s}
+@keyframes w{0%,100%{height:18%}50%{height:100%}}
+
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media(min-width:560px){h1{font-size:30px}.stage .de{font-size:31px}.stage .say{font-size:36px}}
+</style>
+</head><body>
+<header><div class="hd">
+  <div class="mark">Annetti Vannetti</div>
+  <div class="hd-right">
+    <span id="hd-streak">🔥 <span class="v">0</span></span>
+    <span id="hd-xp">🍪 <span class="v">0</span></span>
+    <button class="lockbtn" id="lockbtn" aria-label="Adminbereich">⚙</button>
+  </div>
+</div></header>
+<div id="hello" class="hello"><div class="hello-in">
+  <div class="hello-mark">Annetti Vannetti</div>
+  <p class="hello-text">Willkommen Habibti, bereit für unsere Familie unsere Sprache
+  zu lernen und damit die assyrische Kultur weiter zu tragen?</p>
+  <div class="hello-bar"><i></i></div>
+</div></div>
+<main id="app"></main>
+<nav class="tabs"><div class="tabs-in" id="tabs"></div></nav>
+<div id="sheet"></div>
+<!--PACK-->
+<script>
+/* =======================================================================
+   KURSINHALT
+   -----------------------------------------------------------------------
+   Aufbau:  {t:"Kapitel", ls:[ Lektionen ]}
+   Lektion: {t:"Titel", w:[[deutsch, aussprache], ...]}   Wörter
+            {t:"Titel", s:[[deutsch, aussprache], ...]}   Sätze
+            {t:"Titel", dlg:[[wer, deutsch, aussprache]]} Dialog
+            {t:"Titel", rev:1}                            reine Wiederholung
+   Die IDs werden aus der Position erzeugt (c1l2w3). Reihenfolge also nur
+   ergänzen, nicht umsortieren — sonst wandern Aufnahmen zum falschen Wort.
+   Sprecherin ist weiblich, angesprochen wird meist ein Mann.
+   ======================================================================= */
+const COURSE = [
+{t:"Erste Wörter", ls:[
+  {t:"Hallo sagen", w:[
+    ["Hallo","Shlama"],["Guten Morgen","Sapra brikha"],["Guten Abend","Ramsha brikha"],
+    ["Gute Nacht","Lele brikha"],["Willkommen","B'shena"],["Tschüss","Push b'shena"]]},
+  {t:"Ja, nein, danke", w:[
+    ["ja","he"],["nein","la"],["danke","basima"],["vielen Dank","basima raba"],
+    ["bitte","ba'utha"],["Entschuldigung","shwoq li"]]},
+  {t:"Erste kleine Sätze", s:[
+    ["Wie geht es dir?","Dakhi iwet?"],["Mir geht es gut.","Spay iwan."],
+    ["Und dir?","W'ati?"],["Danke, gut.","Basima, spay."],
+    ["Bis später.","Khazekh basir."]]},
+  {t:"Wiederholung – Kapitel 1", rev:1}
+]},
+
+{t:"Sich vorstellen", ls:[
+  {t:"Wie heißt du?", s:[
+    ["Ich heiße Annette.","Shimi Annette."],["Wie heißt du?","Mo shimokh?"],
+    ["Das ist mein Name.","Aha ile shimi."],["Ich freue mich.","Khdita wan."]]},
+  {t:"Woher kommst du?", s:[
+    ["Ich komme aus Deutschland.","Ana min Almanya wan."],["Woher kommst du?","Min eka iwet?"],
+    ["Ich wohne in Leipzig.","Ana b'Leipzig k'khayan."],["Wo wohnst du?","Eka k'khayet?"]]},
+  {t:"Sprachen", s:[
+    ["Ich spreche Deutsch.","Ana Almanaya k'hamzman."],["Ich lerne Assyrisch.","Ana Sureth k'yalpan."],
+    ["Sprichst du Deutsch?","Almanaya k'hamzmet?"],["Ich verstehe.","K'parman."],
+    ["Ich verstehe nicht.","La k'parman."],["Langsam bitte.","Nikha, ba'utha."],
+    ["Noch einmal, bitte.","Kha ga khita, ba'utha."]]},
+  {t:"Fragewörter", w:[
+    ["wer","mani"],["was","mo"],["wo","eka"],["wann","emat"],
+    ["wie","dakhi"],["warum","qamodi"],["wie viel","kma"]]},
+  {t:"Wiederholung – Kapitel 2", rev:1}
+]},
+
+{t:"Familie", ls:[
+  {t:"Mutter und Vater", w:[
+    ["die Mutter","yimma"],["der Vater","baba"],["die Eltern","baba w yimma"],
+    ["meine Mutter","yimmi"],["mein Vater","babi"]]},
+  {t:"Geschwister und Kinder", w:[
+    ["der Bruder","akhona"],["die Schwester","khatha"],["der Sohn","brona"],
+    ["die Tochter","brata"],["das Kind","yala"],["die Kinder","yale"]]},
+  {t:"Oma, Opa, Verwandte", w:[
+    ["die Oma","nana"],["der Opa","sawa"],["der Onkel","mamo"],["die Tante","khaltha"],
+    ["die Familie","baytutha"],["der Freund","khawra"],["die Freundin","khwarta"]]},
+  {t:"Über die Familie sprechen", s:[
+    ["Das ist meine Familie.","Aya la baytuthi."],["Ich habe einen Bruder.","Ithli kha akhona."],
+    ["Hast du Kinder?","Ithlokh yale?"],["Ich liebe dich.","K'rakhmannokh."],
+    ["Ich habe eine Schwester.","Ithli kha khatha."]]},
+  {t:"Wiederholung – Kapitel 3", rev:1}
+]},
+
+{t:"Zahlen", ls:[
+  {t:"Eins bis fünf", w:[
+    ["eins","kha"],["zwei","tre"],["drei","tlatha"],["vier","arba"],["fünf","khamsha"]]},
+  {t:"Sechs bis zehn", w:[
+    ["sechs","ishta"],["sieben","shawwa"],["acht","tmanya"],["neun","tisha"],["zehn","isra"]]},
+  {t:"Elf bis zwanzig", w:[
+    ["elf","khadassar"],["zwölf","tressar"],["dreizehn","tlattassar"],["vierzehn","arbassar"],
+    ["fünfzehn","khammishar"],["zwanzig","'isri"]]},
+  {t:"Große Zahlen", w:[
+    ["dreißig","tlathi"],["vierzig","arbi"],["fünfzig","khamshi"],["hundert","imma"],["tausend","alpa"]]},
+  {t:"Zahlen benutzen", s:[
+    ["Wie viel kostet das?","Kma ile timma?"],["Ich bin dreißig Jahre alt.","Ithli tlathi shinne."],
+    ["Wie alt bist du?","Kma shinne ithlokh?"],["zwei Kaffee, bitte","tre qahwe, ba'utha"]]},
+  {t:"Wiederholung – Kapitel 4", rev:1}
+]},
+
+{t:"Farben und Eigenschaften", ls:[
+  {t:"Farben", w:[
+    ["rot","smoqa"],["blau","zarqa"],["grün","yaroqa"],["gelb","zarda"],
+    ["schwarz","ukkama"],["weiß","khiwara"]]},
+  {t:"Groß und klein", w:[
+    ["groß","gura"],["klein","zora"],["neu","khatha"],["alt","'atiqa"],
+    ["schön","shapira"],["gut","tawa"],["schlecht","bisha"]]},
+  {t:"Warm und kalt", w:[
+    ["warm","shakhina"],["kalt","qarira"],["viel","raba"],["wenig","basor"],
+    ["schnell","jaldi"],["langsam","nikha"]]},
+  {t:"Wiederholung – Kapitel 5", rev:1}
+]},
+
+{t:"Zeit", ls:[
+  {t:"Heute, morgen, gestern", w:[
+    ["heute","idyom"],["morgen","makhar"],["gestern","tmal"],["jetzt","hadiya"],
+    ["später","basir"],["immer","kul yom"]]},
+  {t:"Tag, Woche, Jahr", w:[
+    ["der Tag","yoma"],["die Nacht","lele"],["die Woche","shawua"],
+    ["der Monat","yarkha"],["das Jahr","shita"],["die Stunde","sha'ta"]]},
+  {t:"Die Wochentage", w:[
+    ["Montag","tren b'shaba"],["Dienstag","tlatha b'shaba"],["Mittwoch","arba b'shaba"],
+    ["Donnerstag","khamsha b'shaba"],["Freitag","'ruwta"],["Samstag","shabta"],["Sonntag","khad b'shaba"]]},
+  {t:"Über Zeit sprechen", s:[
+    ["Wie spät ist es?","Kma la sha'ta?"],["Wir sehen uns morgen.","Khazekh makhar."],
+    ["Ich habe heute Zeit.","Ithli idyom wakhta."],["Bis morgen!","Hal makhar!"]]},
+  {t:"Wiederholung – Kapitel 6", rev:1}
+]},
+
+{t:"Essen und Trinken", ls:[
+  {t:"Auf dem Tisch", w:[
+    ["das Brot","lakhma"],["das Wasser","maya"],["der Tee","chai"],["der Kaffee","qahwa"],
+    ["die Milch","khalwa"],["das Ei","be'tha"]]},
+  {t:"Mehr zu essen", w:[
+    ["das Fleisch","bisra"],["der Reis","rizza"],["der Käse","gupta"],["das Salz","milkha"],
+    ["der Zucker","shakar"],["der Apfel","khabusha"],["das Essen","mekhulta"]]},
+  {t:"Hunger und Durst", s:[
+    ["Ich habe Hunger.","Kpinta wan."],["Ich habe Durst.","Sahitha wan."],
+    ["Ich esse Brot.","Lakhma k'akhlan."],["Ich trinke Tee.","Chai k'shatyan."],
+    ["Das schmeckt gut.","Aha basima ile."]]},
+  {t:"Dialog: im Café", dlg:[
+    ["A","Hallo, guten Morgen!","Shlama, sapra brikha!"],
+    ["B","Guten Morgen. Was möchtest du?","Sapra brikha. Mo k'ba'yet?"],
+    ["A","Einen Kaffee, bitte.","Kha qahwa, ba'utha."],
+    ["B","Mit Zucker?","Im shakar?"],
+    ["A","Ja, danke.","He, basima."],
+    ["B","Bitte sehr.","Ba'utha."]]},
+  {t:"Wiederholung – Kapitel 7", rev:1}
+]},
+
+{t:"Zuhause", ls:[
+  {t:"Das Haus", w:[
+    ["das Haus","bayta"],["die Tür","tar'a"],["das Fenster","kawa"],["der Schlüssel","qlida"],
+    ["das Licht","bahra"],["der Tisch","patora"],["der Stuhl","kursi"]]},
+  {t:"Dinge und Orte", w:[
+    ["das Buch","ktawa"],["das Auto","radhita"],["die Stadt","mdita"],["das Dorf","mata"],
+    ["die Straße","urkha"],["die Schule","madrashta"],["die Arbeit","pulkhana"]]},
+  {t:"Zu Hause sprechen", s:[
+    ["Ich bin zu Hause.","B'bayta wan."],["Wo bist du?","Eka iwet?"],
+    ["Komm her!","Ta lakha!"],["Setz dich.","Tiw."],["Mach die Tür zu.","Skhor tar'a."]]},
+  {t:"Wiederholung – Kapitel 8", rev:1}
+]},
+
+{t:"Körper und Gesundheit", ls:[
+  {t:"Der Körper", w:[
+    ["der Kopf","resha"],["das Auge","'ayna"],["die Hand","ida"],["der Fuß","aqla"],
+    ["das Herz","leba"],["der Mund","puma"],["das Haar","sa'ra"]]},
+  {t:"Wenn es weh tut", s:[
+    ["Ich bin krank.","Mrita wan."],["Mein Kopf tut weh.","Reshi ki'wa."],
+    ["Ich brauche einen Arzt.","Bayan asya."],["Es geht mir nicht gut.","La spay iwan."],
+    ["Gute Besserung!","Basima l'shena!"]]},
+  {t:"Wiederholung – Kapitel 9", rev:1}
+]},
+
+{t:"Wörter für jeden Tag", ls:[
+  {t:"Gehen und kommen", s:[
+    ["Ich gehe.","K'azan."],["Ich komme.","K'atyan."],["Gehen wir!","Sa!"],
+    ["Warte auf mich.","Sni li."],["Ich bin hier.","Lakha wan."]]},
+  {t:"Wollen und können", s:[
+    ["Ich möchte …","K'ba'yan …"],["Ich möchte Wasser.","Maya k'ba'yan."],
+    ["Ich kann das.","K'masyan aha."],["Ich kann nicht.","La k'masyan."],
+    ["Hilf mir bitte.","Hayir li, ba'utha."]]},
+  {t:"Sehen, sagen, wissen", s:[
+    ["Ich sehe dich.","K'khazyannokh."],["Ich weiß.","K'yad'an."],
+    ["Ich weiß nicht.","La k'yad'an."],["Sag es noch einmal.","Mir kha ga khita."],
+    ["Was sagst du?","Mo k'amret?"]]},
+  {t:"Arbeiten und schlafen", s:[
+    ["Ich arbeite heute.","Idyom k'palkhan."],["Ich bin müde.","M'khilta wan."],
+    ["Ich gehe schlafen.","K'azan damkhan."],["Schlaf gut.","Damokh spay."]]},
+  {t:"Wiederholung – Kapitel 10", rev:1}
+]},
+
+{t:"Unterwegs und einkaufen", ls:[
+  {t:"Einkaufen", w:[
+    ["das Geld","zuze"],["der Markt","shuqa"],["der Laden","dukana"],
+    ["teuer","yaqura"],["die Rechnung","khushbana"]]},
+  {t:"Im Laden fragen", s:[
+    ["Was kostet das Brot?","Kma ile timma d'lakhma?"],["Hast du Brot?","Ithlokh lakhma?"],
+    ["Das ist zu teuer.","Aha raba yaqura ile."],["Ich nehme das.","Aha k'shaqlan."],
+    ["Danke, das ist alles.","Basima, aha ile kulle."]]},
+  {t:"Dialog: auf dem Markt", dlg:[
+    ["A","Hallo, haben Sie Äpfel?","Shlama, ithlokh khabushe?"],
+    ["B","Ja, natürlich.","He, hatman."],
+    ["A","Wie viel kostet ein Kilo?","Kma ile timma d'kha kilo?"],
+    ["B","Drei Euro.","Tlatha euro."],
+    ["A","Gut, ich nehme zwei Kilo.","Spay, tre kilo k'shaqlan."],
+    ["B","Bitte sehr. Danke!","Ba'utha. Basima!"]]},
+  {t:"Wiederholung – Kapitel 11", rev:1}
+]},
+
+{t:"Gefühle und Small Talk", ls:[
+  {t:"Wie fühlst du dich?", w:[
+    ["glücklich","khidya"],["müde","m'khilta"],["hungrig","kpinta"],
+    ["durstig","sahitha"],["krank","mrita"],["allein","balkhod"]]},
+  {t:"Nette Sätze", s:[
+    ["Du bist schön.","Shapira iwet."],["Ich bin glücklich.","Khdita wan."],
+    ["Ich denke an dich.","B'khshawi iwet."],["Ich warte auf dich.","K'snyannokh."],
+    ["Mein Herz.","Lebbi."]]},
+  {t:"Small Talk", s:[
+    ["Was machst du?","Mo k'awdhet?"],["Nichts Besonderes.","La midi."],
+    ["Alles gut?","Kulle spay?"],["Alles gut.","Kulle spay."],
+    ["Wir sehen uns.","Khazekh."]]},
+  {t:"Dialog: kurzer Anruf", dlg:[
+    ["A","Hallo, wie geht es dir?","Shlama, dakhi iwet?"],
+    ["B","Gut, danke. Und dir?","Spay, basima. W'ati?"],
+    ["A","Auch gut. Wo bist du?","Ap ana spay. Eka iwet?"],
+    ["B","Ich bin gerade zu Hause.","Hadiya b'bayta wan."],
+    ["A","Gut, bis später!","Spay, khazekh basir!"],
+    ["B","Tschüss!","Push b'shena!"]]},
+  {t:"Wiederholung – Kapitel 12", rev:1}
+]}
+];
+
+/* Motivationssprüche nach jeder Lektion – hier änderbar */
+const CHEERS = [
+  "Super! Damit du später auch mit unserem Kind Assyrisch sprechen kannst.",
+  "Sehr gut! Dafür darfst du gleich angeben.",
+  "Weiter so — ich bin stolz auf dich, Habibti.",
+  "Du wirst immer besser! Annetti Vannetti, die Beste.",
+  "Nur noch eine Lektion! Lernenneee.",
+  "Perfekt. Hab dich lieb.",
+  "Stark. Das saß.",
+  "Noch eine Runde und du bestellst den Kaffee alleine."
+];
+
+/* Begrüßung auf dem Startschirm – wechselt zufällig */
+const HELLOS = [
+  "Habibi",
+  "Mein Herz",
+  "In Liebe für dich, Annette",
+  "Wann gibt's eigentlich wieder Blowi?",
+  "Habibti"
+];
+
+/* Ausspracheschlüssel */
+const KEY = [
+  ["sh","wie sch in <b>Sch</b>ule"],
+  ["kh","raues ch wie in Ba<b>ch</b>"],
+  ["q","kehliges k, weit hinten"],
+  ["'","kurzer Stopp, wie in be<b>'</b>achten"],
+  ["th","weiches th, fast wie s"],
+  ["dh","weiches d, fast wie das englische th"],
+  ["a","offen und kurz, wie in H<b>a</b>nd"]
+];
+</script>
+<script>
+/* ========================= Werkzeuge ========================= */
+const $  = (s,r=document)=>r.querySelector(s);
+const $$ = (s,r=document)=>[...r.querySelectorAll(s)];
+const esc = s => String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const TEMPLATE = document.documentElement.outerHTML;   // sauberer Bauplan für den Export
+const PACK = (typeof window!=="undefined" && window.__PACK__) || null;
+const DAY = 864e5;
+const today = () => new Date().toISOString().slice(0,10);
+const norm = s => String(s).toLowerCase().replace(/['’\-\s.,!?]/g,"");
+
+/* ========================= Speicher ========================= */
+const DB = (()=>{
+  let p;
+  const open = () => p || (p = new Promise((res,rej)=>{
+    const r = indexedDB.open("annetti-assyrisch",1);
+    r.onupgradeneeded = () => {
+      const db=r.result;
+      ["audio","mine","meta"].forEach(s=>{ if(!db.objectStoreNames.contains(s)) db.createObjectStore(s); });
+    };
+    r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error);
+  }));
+  const tx = async (store,mode,fn)=>{
+    const db = await open();
+    return new Promise((res,rej)=>{
+      const t=db.transaction(store,mode), req=fn(t.objectStore(store));
+      t.oncomplete=()=>res(req&&req.result); t.onerror=()=>rej(t.error);
+    });
+  };
+  return {
+    get:(s,k)=>tx(s,"readonly",st=>st.get(k)),
+    set:(s,k,v)=>tx(s,"readwrite",st=>st.put(v,k)),
+    del:(s,k)=>tx(s,"readwrite",st=>st.delete(k)),
+    keys:s=>tx(s,"readonly",st=>st.getAllKeys())
+  };
+})();
+
+/* ========================= Zustand ========================= */
+const S = {
+  view:"heute", xp:0, streak:0, lastDay:"", xpToday:0, goal:50,
+  done:{}, srs:{}, fav:{}, hard:{},
+  edits:{}, custom:[], del:{},
+  have:new Set(), mine:new Set(),
+  admin:false, notice:"", playing:null, recId:null, recStore:"audio",
+  search:"", listCh:0, sheet:null
+};
+let RUN=null, mediaRecorder=null, saveTimer=null, recTimer=null, recStart=0;
+const recClock = () => { const s=Math.floor((Date.now()-recStart)/1000);
+  return String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0"); };
+const urlCache={};
+
+function plain(){
+  return {xp:S.xp,streak:S.streak,lastDay:S.lastDay,xpToday:S.xpToday,goal:S.goal,
+    done:S.done,srs:S.srs,fav:S.fav,hard:S.hard,edits:S.edits,custom:S.custom,del:S.del};
+}
+function save(){
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(()=>DB.set("meta","state",plain()).catch(()=>{}),250);
+}
+
+/* ========================= Wortbestand ========================= */
+let ITEMS=[], BYID={};
+function buildItems(){
+  const out=[];
+  COURSE.forEach((ch,ci)=>ch.ls.forEach((ls,li)=>{
+    const arr = ls.w||ls.s;
+    if(arr) arr.forEach((p,ii)=>out.push({id:`${ci+1}.${li+1}.${ii+1}`,de:p[0],tr:p[1],kind:ls.w?"w":"s",ci,li}));
+    if(ls.dlg) ls.dlg.forEach((p,ii)=>out.push({id:`${ci+1}.${li+1}.${ii+1}`,de:p[1],tr:p[2],who:p[0],kind:"d",ci,li}));
+  }));
+  S.custom.forEach(c=>out.push({...c,custom:1}));
+  ITEMS = out.filter(i=>!S.del[i.id]).map(i=> S.edits[i.id] ? {...i,...S.edits[i.id]} : i);
+  BYID={}; ITEMS.forEach(i=>BYID[i.id]=i);
+}
+const lessonOf = (ci,li) => ITEMS.filter(i=>i.ci===ci&&i.li===li);
+const lessonKey = (ci,li) => ci+"."+li;
+function lessonMeta(ci,li){ const l=COURSE[ci].ls[li]; return {...l, items:lessonOf(ci,li)}; }
+function allLessons(){
+  const out=[]; COURSE.forEach((ch,ci)=>ch.ls.forEach((l,li)=>out.push({ci,li,l}))); return out;
+}
+function nextLesson(){
+  const a=allLessons().find(x=>!S.done[lessonKey(x.ci,x.li)]);
+  return a || allLessons()[allLessons().length-1];
+}
+function seenItems(){ return ITEMS.filter(i=>S.srs[i.id]); }
+function dueItems(){ const n=Date.now(); return seenItems().filter(i=>S.srs[i.id].due<=n); }
+
+/* ========================= Wiederholungssystem ========================= */
+const IVL=[36e5, DAY, 3*DAY, 7*DAY, 14*DAY, 30*DAY, 90*DAY];
+function grade(id, ok){
+  const r = S.srs[id] || {b:0,due:0,w:0};
+  if(ok){ r.b=Math.min(r.b+1,IVL.length-1); r.w=Math.max(0,r.w-1); }
+  else   { r.b=0; r.w=Math.min(r.w+1,6); }
+  r.due = Date.now() + Math.round(IVL[r.b]/(1+r.w*0.6));
+  S.srs[id]=r; save();
+}
+function touch(id){ if(!S.srs[id]){ S.srs[id]={b:0,due:Date.now()+36e5,w:0}; save(); } }
+
+function addXP(n){
+  const t=today();
+  if(S.lastDay!==t){
+    S.streak = (S.lastDay && (new Date(t)-new Date(S.lastDay))<=DAY*1.5) ? S.streak+1 : 1;
+    S.lastDay=t; S.xpToday=0;
+  }
+  S.xp+=n; S.xpToday+=n; save(); paintHead();
+}
+function paintHead(){
+  $("#hd-streak").innerHTML = `🔥 <span class="v">${S.streak}</span>`;
+  $("#hd-xp").innerHTML = `🍪 <span class="v">${Math.floor(S.xp/10)}</span>`;
+}
+
+/* ========================= Ton ========================= */
+async function audioUrl(id, store="audio"){
+  const key = store+":"+id;
+  if(urlCache[key]) return urlCache[key];
+  let blob=null;
+  try{ blob = await DB.get(store,id); }catch(e){}
+  if(blob) return (urlCache[key] = URL.createObjectURL(blob));
+  if(store==="audio" && PACK && PACK.audio && PACK.audio[id]) return (urlCache[key]=PACK.audio[id]);
+  return null;
+}
+async function play(id, rate=1, store="audio"){
+  const url = await audioUrl(id,store);
+  if(!url){ toast("Für dieses Wort gibt es noch keine Aufnahme."); return; }
+  const a = new Audio(url); a.playbackRate = rate;
+  S.playing=id; if(!RUN) repaint();
+  a.onended = a.onerror = ()=>{ S.playing=null; if(!RUN) repaint(); };
+  a.play().catch(()=>{ S.playing=null; if(!RUN) repaint(); });
+}
+async function startRec(id, store="audio"){
+  if(S.recId) return stopRec();
+  try{
+    const stream = await navigator.mediaDevices.getUserMedia({audio:true});
+    mediaRecorder = new MediaRecorder(stream);
+    const chunks=[];
+    mediaRecorder.ondataavailable = e => e.data.size && chunks.push(e.data);
+    mediaRecorder.onstop = async ()=>{
+      stream.getTracks().forEach(t=>t.stop());
+      const blob = new Blob(chunks,{type: mediaRecorder.mimeType || "audio/webm"});
+      try{
+        await DB.set(store,id,blob);
+        const key=store+":"+id;
+        if(urlCache[key]){ URL.revokeObjectURL(urlCache[key]); delete urlCache[key]; }
+        (store==="audio"?S.have:S.mine).add(id);
+      }catch(e){ toast("Aufnahme konnte nicht gespeichert werden."); }
+      S.recId=null; clearInterval(recTimer);
+      if(S.sheet) editSheet(S.sheet); else repaint();
+    };
+    mediaRecorder.start();
+    S.recId=id; S.recStore=store; recStart=Date.now();
+    clearInterval(recTimer);
+    recTimer = setInterval(()=>{ const t=$("#rec-time"); if(t) t.textContent=recClock(); },250);
+    if(S.sheet) editSheet(S.sheet); else repaint();
+  }catch(err){
+    S.recId=null;
+    toast(err && err.name==="NotAllowedError"
+      ? "Mikrofon wurde abgelehnt. Im Browser oben auf das Schloss tippen und Mikrofon erlauben."
+      : "Kein Mikrofon verfügbar ("+(err&&err.name)+").");
+    repaint();
+  }
+}
+function stopRec(){ clearInterval(recTimer); mediaRecorder && mediaRecorder.state!=="inactive" && mediaRecorder.stop(); }
+async function delRec(id, store="audio"){
+  await DB.del(store,id);
+  const key=store+":"+id;
+  if(urlCache[key]){ URL.revokeObjectURL(urlCache[key]); delete urlCache[key]; }
+  (store==="audio"?S.have:S.mine).delete(id); repaint();
+}
+
+let toastTimer=null;
+function toast(msg){
+  S.notice=msg; clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>{S.notice=""; if(!RUN) repaint();},4200);
+  if(!RUN) repaint();
+}
+
+/* Sichtbarer Aufnahmeblock: Zustand, Uhr, großer Knopf */
+function recBox(id, store, opts){
+  opts = opts||{};
+  const live = S.recId===id && S.recStore===store;
+  const have = (store==="audio"?S.have:S.mine).has(id);
+  const state = live ? "Aufnahme läuft" : (have ? "Aufnahme gespeichert" : "Noch keine Aufnahme");
+  return `<div class="recbox ${live?"live":(have?"have":"")}">
+    <div class="rec-state"><span class="blob"></span>${state}</div>
+    ${live?`<div class="wave"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>`:""}
+    <div class="rec-time" id="rec-time">${live?recClock():"00:00"}</div>
+    <button class="rec-big ${live?"stop":""}" data-recbig="${esc(id)}" data-recstore="${store}">
+      <span class="${live?"sq":"ci"}"></span>${live?"Aufnahme beenden":(have?"Neu aufnehmen":"Aufnahme starten")}</button>
+    <div class="rec-hint">${live?"Sprich jetzt. Zum Beenden nochmal tippen.":"Tippen, sprechen, nochmal tippen."}</div>
+    ${have&&!live?`<div class="btn-row"><button class="btn ghost" data-recplay="${esc(id)}" data-recstore2="${store}">Anhören</button>${
+      opts.del?`<button class="btn ghost" data-recdel="${esc(id)}" data-recstore3="${store}">Löschen</button>`:""}</div>`:""}
+  </div>`;
+}
+function wireRec(){
+  $$("[data-recbig]").forEach(b=>b.onclick=()=>{
+    const id=b.dataset.recbig, store=b.dataset.recstore;
+    (S.recId===id && S.recStore===store) ? stopRec() : startRec(id,store);
+  });
+  $$("[data-recplay]").forEach(b=>b.onclick=()=>play(b.dataset.recplay,1,b.dataset.recstore2));
+  $$("[data-recdel]").forEach(b=>b.onclick=()=>delRec(b.dataset.recdel,b.dataset.recstore3));
+}
+
+/* ========================= Start ========================= */
+async function boot(){
+  try{
+    const st = await DB.get("meta","state");
+    if(st) Object.assign(S,{
+      xp:st.xp||0, streak:st.streak||0, lastDay:st.lastDay||"", xpToday:st.xpToday||0,
+      goal:st.goal||50, done:st.done||{}, srs:st.srs||{}, fav:st.fav||{}, hard:st.hard||{},
+      edits:st.edits||{}, custom:st.custom||[], del:st.del||{}
+    });
+    S.have = new Set(await DB.keys("audio") || []);
+    S.mine = new Set(await DB.keys("mine") || []);
+  }catch(e){
+    S.notice="Der Browser blockiert den lokalen Speicher. Im privaten Modus lässt sich nichts sichern.";
+  }
+  /* Beigelegte Aufnahmen und Ergänzungen dazunehmen, nichts überschreiben */
+  if(PACK){
+    Object.keys(PACK.audio||{}).forEach(id=>S.have.add(id));
+    Object.entries(PACK.edits||{}).forEach(([id,v])=>{ if(!S.edits[id]) S.edits[id]=v; });
+    const known=new Set(S.custom.map(c=>c.id));
+    (PACK.custom||[]).forEach(c=>{ if(!known.has(c.id)) S.custom.push(c); });
+  }
+  if(S.lastDay && S.lastDay!==today()){
+    const gap = (new Date(today()) - new Date(S.lastDay))/DAY;
+    if(gap>1.5) S.streak=0;
+    S.xpToday=0;
+  }
+  buildItems(); paintHead(); paintTabs();
+  if(!window.isSecureContext) S.notice =
+    "Aufnehmen geht in diesem Browser nur über eine sichere Verbindung. Öffne die Datei mit Firefox oder lege sie auf einen Webserver.";
+  repaint();
+}
+
+/* ========================= Rahmen ========================= */
+const TABS=[["heute","◈","Heute"],["kurs","≡","Kurs"],["ueben","↻","Üben"],["woerter","⌕","Wörter"]];
+function paintTabs(){
+  $("#tabs").innerHTML = TABS.map(([k,g,l])=>
+    `<button class="tab ${S.view===k?"on":""}" data-tab="${k}"><span class="g">${g}</span>${l}</button>`).join("");
+  $$("[data-tab]").forEach(b=>b.onclick=()=>{ S.view=b.dataset.tab; S.admin=false; RUN=null; S.search=""; repaint(); paintTabs(); window.scrollTo(0,0); });
+}
+$("#lockbtn").onclick = ()=>{ S.admin=false; S.view="admin"; RUN=null; repaint(); paintTabs(); window.scrollTo(0,0); };
+
+function noticeHTML(){ return S.notice ? `<div class="note warn">${esc(S.notice)}</div>` : ""; }
+
+function repaint(){
+  if(RUN) return renderRun();
+  ({heute:renderHeute, kurs:renderKurs, ueben:renderUeben, woerter:renderWoerter, admin:renderAdmin}[S.view]||renderHeute)();
+}
+
+/* ========================= Heute ========================= */
+function renderHeute(){
+  const nx = nextLesson(), d = dueItems().length;
+  const totalL = allLessons().length, doneL = Object.keys(S.done).length;
+  const pct = Math.round(doneL/totalL*100);
+  const goalPct = Math.min(100, Math.round(S.xpToday/S.goal*100));
+  $("#app").innerHTML = `
+    <div class="eyebrow">Heute</div>
+    <h1>${S.xpToday>=S.goal ? "Tagesziel geschafft." : hello()}</h1>
+    ${noticeHTML()}
+    <div class="streak">
+      <div class="stat"><div class="n">${S.streak}</div><div class="l">Tage in Folge</div></div>
+      <div class="stat"><div class="n">${Math.floor(S.xpToday/10)}<span style="font-size:13px;color:var(--muted)">/${S.goal/10}</span></div><div class="l">verdiente Kulätsche</div></div>
+      <div class="stat"><div class="n">${seenItems().length}</div><div class="l">Wörter gelernt</div></div>
+    </div>
+    <div class="panel">
+      <div class="spread"><span class="sub">Tagesziel</span><span class="tr">${goalPct}%</span></div>
+      <div class="bar"><i style="width:${goalPct}%"></i></div>
+    </div>
+    <div class="panel">
+      <div class="eyebrow">Als Nächstes</div>
+      <div style="font-weight:650;margin:6px 0 2px">${esc(COURSE[nx.ci].ls[nx.li].t)}</div>
+      <div class="sub">Kapitel ${nx.ci+1} · ${esc(COURSE[nx.ci].t)}</div>
+      <div class="btn-row"><button class="btn" id="go">Lektion starten</button></div>
+      ${d ? `<div class="btn-row"><button class="btn ghost" id="rev">${d} Wörter wiederholen</button></div>`
+          : `<div class="sub" style="margin-top:10px">Gerade nichts fällig. Neue Wörter kommen in die Wiederholung, sobald du sie gelernt hast.</div>`}
+    </div>
+    <div class="panel">
+      <div class="spread"><span class="sub">Kursfortschritt</span><span class="tr">${doneL}/${totalL}</span></div>
+      <div class="bar blue"><i style="width:${pct}%"></i></div>
+    </div>
+    <div class="panel">
+      <div class="eyebrow">Aussprache</div>
+      <div style="margin-top:8px;font-size:13.5px;line-height:1.9">
+        ${KEY.map(([a,b])=>`<div class="spread"><span class="tr">${esc(a)}</span><span class="mut" style="text-align:right">${b}</span></div>`).join("")}
+      </div>
+    </div>
+    <div class="panel">
+      <div class="eyebrow">Tagesziel ändern</div>
+      <div class="btn-row" style="margin-top:10px">
+        ${[20,50,100].map(g=>`<button class="chip ${S.goal===g?"on":""}" data-goal="${g}" style="flex:1;text-align:center;justify-content:center">${g/10} 🍪</button>`).join("")}
+      </div>
+    </div>`;
+  $("#go").onclick = ()=>startLesson(nx.ci,nx.li);
+  const rv=$("#rev"); if(rv) rv.onclick = startReview;
+  $$("[data-goal]").forEach(b=>b.onclick=()=>{ S.goal=+b.dataset.goal; save(); repaint(); });
+}
+
+/* ========================= Kurs ========================= */
+function renderKurs(){
+  const nx = nextLesson();
+  $("#app").innerHTML = `
+    <div class="eyebrow">Kurs</div>
+    <h1>${COURSE.length} Kapitel, ${allLessons().length} Lektionen</h1>
+    ${noticeHTML()}
+    ${COURSE.map((ch,ci)=>{
+      const dn = ch.ls.filter((_,li)=>S.done[lessonKey(ci,li)]).length;
+      return `<div class="chapter">
+        <div class="ch-head"><span class="ch-num">${String(ci+1).padStart(2,"0")}</span>
+          <span class="ch-title">${esc(ch.t)}</span>
+          <span class="ch-num" style="margin-left:auto">${dn}/${ch.ls.length}</span></div>
+        <div class="path">${ch.ls.map((l,li)=>{
+          const done=!!S.done[lessonKey(ci,li)], isNext=(ci===nx.ci&&li===nx.li);
+          const n = l.rev ? "Wiederholung" : (l.dlg ? "Dialog" : lessonOf(ci,li).length+" Wörter");
+          return `<button class="node ${done?"done":""} ${isNext?"next":""}" data-l="${ci}.${li}">
+            <span class="t">${esc(l.t)}</span><span class="m">${done?"✓":n}</span></button>`;
+        }).join("")}</div></div>`;
+    }).join("")}`;
+  $$("[data-l]").forEach(b=>b.onclick=()=>{ const [ci,li]=b.dataset.l.split(".").map(Number); startLesson(ci,li); });
+}
+
+/* ========================= Üben ========================= */
+function renderUeben(){
+  const d=dueItems().length, hard=ITEMS.filter(i=>S.hard[i.id]).length, fav=ITEMS.filter(i=>S.fav[i.id]).length;
+  const seen=seenItems().length;
+  $("#app").innerHTML = `
+    <div class="eyebrow">Üben</div>
+    <h1>Frei üben</h1>
+    ${noticeHTML()}
+    ${seen? "" : `<div class="note">Sobald du die erste Lektion gemacht hast, kannst du hier frei üben.</div>`}
+    <div class="panel"><div class="spread">
+      <div><div style="font-weight:650">Fällige Wiederholung</div><div class="sub">${d} Wörter warten</div></div>
+      <button class="abtn" id="m-due" ${d?"":"disabled"}>Start</button></div></div>
+    <div class="panel"><div class="spread">
+      <div><div style="font-weight:650">Karteikarten</div><div class="sub">Deutsch sehen, selbst sagen</div></div>
+      <button class="abtn" id="m-card" ${seen?"":"disabled"}>Start</button></div></div>
+    <div class="panel"><div class="spread">
+      <div><div style="font-weight:650">Hörmodus</div><div class="sub">Nur hören und erkennen</div></div>
+      <button class="abtn" id="m-hear" ${seen?"":"disabled"}>Start</button></div></div>
+    <div class="panel"><div class="spread">
+      <div><div style="font-weight:650">Schreibmodus</div><div class="sub">Aussprache tippen</div></div>
+      <button class="abtn" id="m-type" ${seen?"":"disabled"}>Start</button></div></div>
+    <div class="panel"><div class="spread">
+      <div><div style="font-weight:650">Schwierige Wörter</div><div class="sub">${hard} markiert</div></div>
+      <button class="abtn" id="m-hard" ${hard?"":"disabled"}>Start</button></div></div>
+    <div class="panel"><div class="spread">
+      <div><div style="font-weight:650">Lieblingswörter</div><div class="sub">${fav} gespeichert</div></div>
+      <button class="abtn" id="m-fav" ${fav?"":"disabled"}>Start</button></div></div>`;
+  const pool = arr => arr.sort(()=>Math.random()-.5).slice(0,12);
+  const on=(id,fn)=>{const e=$("#"+id); if(e) e.onclick=fn;};
+  on("m-due", startReview);
+  on("m-card",()=>runFrom(pool(seenItems()),"teach"));
+  on("m-hear",()=>runFrom(pool(seenItems().filter(i=>S.have.has(i.id))),"hear"));
+  on("m-type",()=>runFrom(pool(seenItems().filter(i=>i.kind==="w")),"type"));
+  on("m-hard",()=>runFrom(pool(ITEMS.filter(i=>S.hard[i.id])),"mc"));
+  on("m-fav", ()=>runFrom(pool(ITEMS.filter(i=>S.fav[i.id])),"teach"));
+}
+
+/* ========================= Wörter ========================= */
+function renderWoerter(){
+  const q=norm(S.search);
+  let list = ITEMS;
+  if(S.listCh>0) list=list.filter(i=>i.ci===S.listCh-1);
+  if(q) list=list.filter(i=>norm(i.de).includes(q)||norm(i.tr).includes(q));
+  $("#app").innerHTML = `
+    <div class="eyebrow">Wörter</div>
+    <h1>${ITEMS.length} Einträge</h1>
+    ${noticeHTML()}
+    <input class="field" id="q" placeholder="Suchen …" value="${esc(S.search)}">
+    <div class="scroller">
+      <button class="chip ${S.listCh===0?"on":""}" data-ch="0">Alle</button>
+      ${COURSE.map((c,i)=>`<button class="chip ${S.listCh===i+1?"on":""}" data-ch="${i+1}">${esc(c.t)}</button>`).join("")}
+    </div>
+    ${list.length? `<div class="list">${list.slice(0,300).map(i=>`
+      <div class="item">
+        <span class="dot ${S.have.has(i.id)?"on":""}"></span>
+        <div class="txt"><div class="de">${esc(i.de)}</div><div class="say">${esc(i.tr)}</div></div>
+        <button class="icon ${S.playing===i.id?"on":""}" data-p="${i.id}" aria-label="Anhören">▶</button>
+        <button class="icon ${S.fav[i.id]?"on":""}" data-f="${i.id}" aria-label="Lieblingswort">★</button>
+        <button class="icon ${S.hard[i.id]?"on":""}" data-h="${i.id}" aria-label="Schwierig">!</button>
+      </div>`).join("")}</div>`
+      : `<div class="panel sub">Nichts gefunden.</div>`}
+    <p class="sub" style="margin-top:14px">Punkt links heißt: Aufnahme vorhanden.</p>`;
+  const inp=$("#q");
+  inp.oninput = e => { S.search=e.target.value; const p=e.target.selectionStart; repaint(); const n=$("#q"); n.focus(); n.setSelectionRange(p,p); };
+  $$("[data-ch]").forEach(b=>b.onclick=()=>{S.listCh=+b.dataset.ch;repaint();});
+  $$("[data-p]").forEach(b=>b.onclick=()=>play(b.dataset.p));
+  $$("[data-f]").forEach(b=>b.onclick=()=>{S.fav[b.dataset.f]=!S.fav[b.dataset.f];save();repaint();});
+  $$("[data-h]").forEach(b=>b.onclick=()=>{S.hard[b.dataset.h]=!S.hard[b.dataset.h];save();repaint();});
+}
+
+/* ========================= Lektion bauen ========================= */
+function distract(item, n=3){
+  const same = ITEMS.filter(i=>i.id!==item.id && i.kind===item.kind && i.ci===item.ci);
+  const pool = (same.length>=n?same:ITEMS.filter(i=>i.id!==item.id));
+  return pool.sort(()=>Math.random()-.5).slice(0,n);
+}
+function quizStep(item, kind){
+  if(kind==="type" && item.kind==="w") return {k:"type",item};
+  if(kind==="hear") return {k:"mc",item,dir:"hear",opts:shuffle([item,...distract(item)])};
+  const dir = Math.random()<.5 ? "de2tr":"tr2de";
+  return {k:"mc",item,dir,opts:shuffle([item,...distract(item)])};
+}
+const shuffle = a => a.slice().sort(()=>Math.random()-.5);
+
+function startLesson(ci,li){
+  const l = COURSE[ci].ls[li];
+  const items = lessonOf(ci,li);
+  const steps=[];
+  if(l.dlg){
+    steps.push({k:"dlg",ci,li});
+    items.forEach(it=>steps.push({k:"teach",item:it}));
+    shuffle(items).slice(0,5).forEach(it=>steps.push(quizStep(it)));
+  } else if(l.rev){
+    const prev = ITEMS.filter(i=>i.ci===ci && i.li<li);
+    const mix = shuffle([...dueItems(), ...prev]).filter((v,i,a)=>a.findIndex(x=>x.id===v.id)===i).slice(0,12);
+    if(!mix.length){ toast("Erst ein paar Lektionen lernen, dann gibt es hier etwas zu wiederholen."); return; }
+    mix.forEach(it=>steps.push(quizStep(it, it.kind==="w"&&Math.random()<.35?"type":"")));
+  } else {
+    items.forEach(it=>steps.push({k:"teach",item:it}));
+    shuffle(items).forEach(it=>steps.push(quizStep(it)));
+    shuffle(items).slice(0,3).forEach(it=>steps.push(quizStep(it,it.kind==="w"?"type":"")));
+    const old = shuffle(dueItems().filter(i=>!items.some(x=>x.id===i.id))).slice(0,3);
+    old.forEach(it=>steps.push(quizStep(it)));
+  }
+  RUN={steps,i:0,right:0,wrong:0,ci,li,lesson:true,answered:false,picked:null};
+  window.scrollTo(0,0); renderRun();
+}
+function startReview(){
+  const d=shuffle(dueItems()).slice(0,15);
+  if(!d.length){ toast("Gerade ist nichts fällig."); return; }
+  runFrom(d,"mix");
+}
+function runFrom(items, mode){
+  if(!items.length){ toast("Dafür gibt es noch keine Wörter."); return; }
+  const steps=[];
+  items.forEach(it=>{
+    if(mode==="teach") steps.push({k:"teach",item:it});
+    else if(mode==="hear") steps.push(quizStep(it,"hear"));
+    else if(mode==="type") steps.push(quizStep(it,"type"));
+    else steps.push(quizStep(it));
+  });
+  RUN={steps,i:0,right:0,wrong:0,lesson:false,answered:false,picked:null};
+  window.scrollTo(0,0); renderRun();
+}
+function endRun(){
+  if(RUN && RUN.lesson){
+    S.done[lessonKey(RUN.ci,RUN.li)] = 1;
+    addXP(20 + RUN.right*5);
+  } else if(RUN){ addXP(RUN.right*5); }
+  const right=RUN?RUN.right:0, total=RUN?(RUN.right+RUN.wrong):0;
+  const cheer = CHEERS[Math.floor(Math.random()*CHEERS.length)];
+  RUN=null; save();
+  $("#app").innerHTML = `
+    <div class="eyebrow">Fertig</div>
+    <h1>${cheer}</h1>
+    <div class="streak">
+      <div class="stat"><div class="n">${total?Math.round(right/total*100):100}%</div><div class="l">richtig</div></div>
+      <div class="stat"><div class="n">${Math.floor(S.xpToday/10)}</div><div class="l">Kulätsche heute</div></div>
+      <div class="stat"><div class="n">${S.streak}</div><div class="l">Tage in Folge</div></div>
+    </div>
+    <button class="btn" id="more">Weiter lernen</button>
+    <button class="btn quiet" id="home">Zurück zur Übersicht</button>`;
+  $("#more").onclick=()=>{ const n=nextLesson(); startLesson(n.ci,n.li); };
+  $("#home").onclick=()=>{ S.view="heute"; repaint(); paintTabs(); };
+  paintTabs();
+}
+
+/* ========================= Lektion anzeigen ========================= */
+function renderRun(){
+  const st = RUN.steps[RUN.i];
+  if(!st) return endRun();
+  const pct = Math.round(RUN.i/RUN.steps.length*100);
+  const head = `<div class="progress-top">
+      <button class="x" id="quit" aria-label="Beenden">✕</button>
+      <div class="bar"><i style="width:${pct}%"></i></div>
+      <span class="mut" style="font-family:var(--mono);font-size:12px">${RUN.i+1}/${RUN.steps.length}</span>
+    </div>${noticeHTML()}`;
+  const box = {teach:stepTeach, mc:stepMC, type:stepType, dlg:stepDlg}[st.k](st);
+  $("#app").innerHTML = head + box.html;
+  $("#quit").onclick = ()=>{ RUN=null; S.view= S.view==="admin"?"kurs":S.view; repaint(); paintTabs(); };
+  box.wire();
+}
+const nextStep = ()=>{ RUN.i++; RUN.answered=false; RUN.picked=null; window.scrollTo(0,0); renderRun(); };
+
+function stepTeach(st){
+  const i=st.item, has=S.have.has(i.id);
+  return {
+    html:`<div class="stage">
+      <div class="eyebrow">Hören · Nachsprechen · Wiederholen</div>
+      <div class="de">${esc(i.de)}</div>
+      <div class="say ${i.tr.length>16?"sm":""}">${esc(i.tr)}</div>
+      <div class="audio-row">
+        <button class="abtn" data-play="1" ${has?"":"disabled"}>▶ Anhören</button>
+        <button class="abtn" data-slow="1" ${has?"":"disabled"}>◐ Langsam</button>
+      </div>
+      ${has?"":`<div class="hint">Für dieses Wort fehlt noch die Aufnahme.</div>`}
+      <div class="hint">Sprich es dreimal laut nach: langsam, normal, dann ohne Hinsehen.</div>
+    </div>
+    ${recBox(i.id,"mine",{del:1})}
+    <div class="btn-row"><button class="btn" id="ok">Weiter</button></div>
+    <div class="btn-row">
+      <button class="btn ghost" id="fav">${S.fav[i.id]?"★ gespeichert":"☆ Lieblingswort"}</button>
+      <button class="btn ghost" id="hard">${S.hard[i.id]?"! schwierig":"Als schwierig"}</button>
+    </div>`,
+    wire(){
+      $("[data-play]").onclick=()=>play(i.id);
+      $("[data-slow]").onclick=()=>play(i.id,.6);
+      wireRec();
+      $("#fav").onclick=()=>{S.fav[i.id]=!S.fav[i.id];save();renderRun();};
+      $("#hard").onclick=()=>{S.hard[i.id]=!S.hard[i.id];save();renderRun();};
+      $("#ok").onclick=()=>{ touch(i.id); addXP(2); nextStep(); };
+    }};
+}
+
+function stepMC(st){
+  const i=st.item, opts=st.opts, ask = st.dir==="hear" ? "Was hörst du?" : (st.dir==="de2tr"?"Wie sagt man das?":"Was heißt das?");
+  const prompt = st.dir==="hear" ? `<button class="abtn" id="hear">▶ Nochmal hören</button>`
+    : st.dir==="de2tr" ? `<div class="de">${esc(i.de)}</div>` : `<div class="say ${i.tr.length>16?"sm":""}">${esc(i.tr)}</div>`;
+  const front = o => st.dir==="tr2de" ? esc(o.de) : `<span class="k">${esc(o.tr)}</span>`;
+  const back  = o => st.dir==="tr2de" ? `<span class="k">${esc(o.tr)}</span>` : `<span class="mut">${esc(o.de)}</span>`;
+  return {
+    html:`<div class="stage"><div class="eyebrow">${ask}</div>${prompt}</div>
+      <div class="opts">${opts.map(o=>{
+        let cls="";
+        if(RUN.answered) cls = o.id===i.id ? "right" : (o.id===RUN.picked?"wrong":"");
+        return `<button class="opt ${cls}" data-o="${esc(o.id)}" ${RUN.answered?"disabled":""}>
+          ${front(o)}${RUN.answered?back(o):""}</button>`;
+      }).join("")}</div>
+      ${RUN.answered?`<div class="btn-row"><button class="btn" id="next">Weiter</button></div>`:""}`,
+    wire(){
+      if(st.dir==="hear"){ const h=$("#hear"); if(h) h.onclick=()=>play(i.id); if(!RUN.answered && S.have.has(i.id)) play(i.id); }
+      $$("[data-o]").forEach(b=>b.onclick=()=>{
+        if(RUN.answered) return;
+        RUN.picked=b.dataset.o; RUN.answered=true;
+        const ok = RUN.picked===i.id;
+        ok?RUN.right++:RUN.wrong++; grade(i.id,ok);
+        if(ok) addXP(10); else S.hard[i.id]=1;
+        renderRun();
+      });
+      const n=$("#next"); if(n) n.onclick=nextStep;
+    }};
+}
+
+function stepType(st){
+  const i=st.item;
+  return {
+    html:`<div class="stage">
+        <div class="eyebrow">Schreib die Aussprache</div>
+        <div class="de">${esc(i.de)}</div>
+        ${S.have.has(i.id)?`<div class="audio-row"><button class="abtn" id="p">▶ Anhören</button></div>`:""}
+      </div>
+      <div style="margin-top:14px"><input class="answer" id="a" autocapitalize="off" autocomplete="off" spellcheck="false" placeholder="…"></div>
+      <div id="v"></div>
+      <div class="btn-row"><button class="btn" id="ck">Prüfen</button></div>`,
+    wire(){
+      const p=$("#p"); if(p) p.onclick=()=>play(i.id);
+      const inp=$("#a"); setTimeout(()=>inp.focus(),60);
+      const check=()=>{
+        if(RUN.answered) return nextStep();
+        const ok = norm(inp.value)===norm(i.tr);
+        RUN.answered=true; ok?RUN.right++:RUN.wrong++; grade(i.id,ok);
+        if(ok) addXP(12); else S.hard[i.id]=1;
+        $("#v").innerHTML = ok
+          ? `<div class="verdict ok">Richtig. <b>${esc(i.tr)}</b></div>`
+          : `<div class="verdict no">Fast. Richtig ist <b>${esc(i.tr)}</b></div>`;
+        $("#ck").textContent="Weiter"; inp.blur();
+      };
+      $("#ck").onclick=check;
+      inp.onkeydown=e=>{ if(e.key==="Enter") check(); };
+    }};
+}
+
+function stepDlg(st){
+  const l=COURSE[st.ci].ls[st.li], items=lessonOf(st.ci,st.li);
+  return {
+    html:`<div class="eyebrow">Dialog</div><h1 style="margin-bottom:14px">${esc(l.t)}</h1>
+      <div class="dlg">${items.map((i,n)=>`
+        <div class="bubble ${l.dlg[n]&&l.dlg[n][0]==="B"?"b":""}">
+          <div class="de">${esc(i.de)}</div><div class="say">${esc(i.tr)}</div>
+          <div class="audio-row" style="justify-content:flex-start;margin-top:8px">
+            <button class="icon" data-p="${i.id}">▶</button>
+            <button class="icon" data-s="${i.id}">◐</button>
+          </div></div>`).join("")}</div>
+      <div class="btn-row" style="margin-top:16px"><button class="btn" id="go">Jetzt üben</button></div>`,
+    wire(){
+      $$("[data-p]").forEach(b=>b.onclick=()=>play(b.dataset.p));
+      $$("[data-s]").forEach(b=>b.onclick=()=>play(b.dataset.s,.6));
+      $("#go").onclick=nextStep;
+    }};
+}
+
+/* ========================= Adminbereich ========================= */
+function renderAdmin(){
+  if(!S.admin){
+    $("#app").innerHTML = `
+      <div class="eyebrow">Adminbereich</div>
+      <h1>Passwort</h1>
+      ${noticeHTML()}
+      <div class="panel">
+        <p class="sub">Hier werden Wörter angelegt und Aufnahmen eingesprochen.</p>
+        <input class="field" id="pw" type="password" inputmode="numeric" placeholder="••••">
+        <button class="btn" id="in">Öffnen</button>
+      </div>`;
+    const go=()=>{ if($("#pw").value.trim()==="1111"){ S.admin=true; repaint(); } else toast("Falsches Passwort."); };
+    $("#in").onclick=go;
+    $("#pw").onkeydown=e=>{ if(e.key==="Enter") go(); };
+    return;
+  }
+  const missing = ITEMS.filter(i=>!S.have.has(i.id)).length;
+  $("#app").innerHTML = `
+    <div class="eyebrow">Adminbereich</div>
+    <h1>Wörter und Aufnahmen</h1>
+    ${noticeHTML()}
+    <div class="streak">
+      <div class="stat"><div class="n">${ITEMS.length}</div><div class="l">Einträge</div></div>
+      <div class="stat"><div class="n">${S.have.size}</div><div class="l">Aufnahmen</div></div>
+      <div class="stat"><div class="n">${missing}</div><div class="l">fehlen noch</div></div>
+    </div>
+
+    <div class="panel">
+      <div class="eyebrow">Neuer Eintrag</div>
+      <label class="lb">Kapitel und Lektion</label>
+      <select class="field" id="n-l">${allLessons().filter(x=>!x.l.rev).map(x=>
+        `<option value="${x.ci}.${x.li}">${x.ci+1}.${x.li+1} — ${esc(x.l.t)}</option>`).join("")}</select>
+      <label class="lb">Deutsch</label>
+      <input class="field" id="n-de" placeholder="Guten Appetit">
+      <label class="lb">Assyrische Aussprache</label>
+      <input class="field mono" id="n-tr" placeholder="basima l'lebbokh">
+      <button class="btn" id="n-add">Hinzufügen</button>
+    </div>
+
+    <div class="panel">
+      <div class="eyebrow">Sichern und übertragen</div>
+      <div class="btn-row"><button class="btn ghost" id="x-app">App mit Aufnahmen sichern</button></div>
+      <div class="btn-row">
+        <button class="btn ghost" id="x-json">Nur Daten sichern</button>
+        <button class="btn ghost" id="x-imp">Daten laden</button>
+      </div>
+      <input type="file" id="x-file" accept="application/json" class="hide">
+      <p class="sub" style="margin-top:10px">„App mit Aufnahmen sichern“ baut eine einzelne HTML-Datei,
+      in der alle Aufnahmen schon drinstecken. Die kann sie öffnen und sofort loslegen — ohne Installation.</p>
+    </div>
+
+    <h2>Alle Einträge</h2>
+    <input class="field" id="aq" placeholder="Suchen …" value="${esc(S.search)}">
+    ${COURSE.map((ch,ci)=>{
+      const rows = ITEMS.filter(i=>i.ci===ci && (!S.search || norm(i.de+i.tr).includes(norm(S.search))));
+      if(!rows.length) return "";
+      return `<h2>${ci+1}. ${esc(ch.t)}</h2><div class="list">${rows.map(i=>{
+        const rec = S.recId===i.id && S.recStore==="audio";
+        return `<div class="item">
+          <span class="dot ${S.have.has(i.id)?"on":""}"></span>
+          <div class="txt"><div class="de">${esc(i.de)}</div><div class="say">${esc(i.tr)}</div></div>
+          ${S.have.has(i.id)?`<button class="icon" data-p="${i.id}">▶</button>`:""}
+          <button class="icon ${rec?"rec":""}" data-e="${i.id}">${rec?"■":"●"}</button>
+        </div>`;
+      }).join("")}</div>`;
+    }).join("")}
+    <button class="btn quiet" id="out" style="margin-top:20px">Adminbereich verlassen</button>`;
+
+  $("#aq").oninput = e => { S.search=e.target.value; const p=e.target.selectionStart; repaint(); const n=$("#aq"); n.focus(); n.setSelectionRange(p,p); };
+  $("#n-add").onclick = ()=>{
+    const de=$("#n-de").value.trim(), tr=$("#n-tr").value.trim();
+    if(!de||!tr) return toast("Deutsch und Aussprache ausfüllen.");
+    const [ci,li]=$("#n-l").value.split(".").map(Number);
+    S.custom.push({id:"u"+Date.now().toString(36),de,tr,kind:de.split(" ").length>2?"s":"w",ci,li});
+    save(); buildItems(); toast("Hinzugefügt."); repaint();
+  };
+  $$("[data-p]").forEach(b=>b.onclick=()=>play(b.dataset.p));
+  $$("[data-e]").forEach(b=>b.onclick=()=>editSheet(b.dataset.e));
+  $("#x-app").onclick = exportApp;
+  $("#x-json").onclick = exportPack;
+  $("#x-imp").onclick = ()=>$("#x-file").click();
+  $("#x-file").onchange = e => e.target.files[0] && importPack(e.target.files[0]);
+  $("#out").onclick = ()=>{ S.admin=false; S.view="heute"; repaint(); paintTabs(); };
+}
+
+function editSheet(id){
+  const i=BYID[id]; if(!i) return;
+  S.sheet=id;
+  $("#sheet").innerHTML = `<div class="sheet"><div class="sheet-in">
+    <div class="eyebrow">Eintrag bearbeiten</div>
+    <label class="lb">Deutsch</label><input class="field" id="e-de" value="${esc(i.de)}">
+    <label class="lb">Assyrische Aussprache</label><input class="field mono" id="e-tr" value="${esc(i.tr)}">
+    <button class="btn" id="e-save">Speichern</button>
+    <label class="lb">Aufnahme</label>
+    ${recBox(id,"audio",{del:1})}
+    <button class="btn danger" id="e-del" style="margin-top:14px">Eintrag löschen</button>
+    <button class="btn quiet" id="e-x">Schließen</button>
+  </div></div>`;
+  const close=()=>{ S.sheet=null; $("#sheet").innerHTML=""; repaint(); };
+  $("#e-x").onclick=close;
+  $("#e-save").onclick=()=>{
+    const de=$("#e-de").value.trim(), tr=$("#e-tr").value.trim();
+    if(i.custom){ const c=S.custom.find(c=>c.id===id); if(c){c.de=de;c.tr=tr;} }
+    else S.edits[id]={de,tr};
+    save(); buildItems(); close();
+  };
+  wireRec();
+  $("#e-del").onclick=()=>{
+    if(i.custom) S.custom=S.custom.filter(c=>c.id!==id); else S.del[id]=1;
+    save(); buildItems(); close();
+  };
+}
+
+/* ========================= Sichern / Übertragen ========================= */
+async function buildPack(){
+  const pack={v:2,edits:S.edits,custom:S.custom,del:S.del,audio:{}};
+  for(const id of S.have){
+    let blob=null;
+    try{ blob=await DB.get("audio",id); }catch(e){}
+    if(blob) pack.audio[id]=await new Promise(r=>{const fr=new FileReader();fr.onload=()=>r(fr.result);fr.readAsDataURL(blob);});
+    else if(PACK && PACK.audio && PACK.audio[id]) pack.audio[id]=PACK.audio[id];
+  }
+  return pack;
+}
+function download(blob,name){
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob); a.download=name; a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),4000);
+}
+async function exportApp(){
+  toast("Datei wird gebaut …");
+  const pack=await buildPack();
+  const tag='<scr'+'ipt id="pack">window.__PACK__='+JSON.stringify(pack).replace(/</g,"\\u003c")+'</scr'+'ipt>';
+  let html = TEMPLATE.replace(/<script id="pack">[\s\S]*?<\/script>/,"<!--PACK-->");
+  html = html.includes("<!--PACK-->") ? html.replace("<!--PACK-->",tag) : html.replace("</head>",tag+"</head>");
+  download(new Blob(["<!doctype html>\n"+html],{type:"text/html"}),"annetti-lernt-assyrisch.html");
+  toast("Fertig. Diese Datei kann sie direkt öffnen.");
+}
+async function exportPack(){
+  const pack=await buildPack();
+  download(new Blob([JSON.stringify(pack)],{type:"application/json"}),"assyrisch-daten.json");
+}
+async function importPack(file){
+  try{
+    const pack=JSON.parse(await file.text());
+    S.edits={...S.edits,...(pack.edits||{})};
+    S.del={...S.del,...(pack.del||{})};
+    const known=new Set(S.custom.map(c=>c.id));
+    (pack.custom||[]).forEach(c=>{ if(!known.has(c.id)) S.custom.push(c); });
+    for(const [id,dataUrl] of Object.entries(pack.audio||{})){
+      const blob=await (await fetch(dataUrl)).blob();
+      await DB.set("audio",id,blob);
+      const k="audio:"+id;
+      if(urlCache[k]){ URL.revokeObjectURL(urlCache[k]); delete urlCache[k]; }
+      S.have.add(id);
+    }
+    save(); buildItems(); toast("Daten übernommen.");
+  }catch(e){ toast("Die Datei konnte nicht gelesen werden."); }
+  repaint();
+}
+
+/* ========================= Tastatur ========================= */
+document.addEventListener("keydown",e=>{
+  if(!RUN || e.target.tagName==="INPUT") return;
+  if(e.key==="Enter"){ const b=$("#next")||$("#ok")||$("#go"); if(b) b.click(); }
+  if(e.key>="1"&&e.key<="4"){ const o=$$("[data-o]")[+e.key-1]; if(o) o.click(); }
+});
+
+/* ========================= Begrüßung ========================= */
+function hello(){ return HELLOS[Math.floor(Math.random()*HELLOS.length)]; }
+(function greet(){
+  const el = $("#hello");
+  if(!el) return;
+  const skip = ()=>{
+    if(el.dataset.gone) return;
+    el.dataset.gone="1"; el.classList.add("go");
+    setTimeout(()=>el.remove(),500);
+  };
+  setTimeout(skip,4000);
+  el.onclick = skip;               // Antippen überspringt
+})();
+
+boot();
+</script>
+</body></html>
