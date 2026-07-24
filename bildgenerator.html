@@ -1,0 +1,555 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0A0A0B">
+<title>Bildgenerator — Annetti Vannetti</title>
+<style>
+:root{
+  --bg:#0A0A0B; --panel:#141416; --panel2:#1B1B1E; --line:#2A2A2F;
+  --ink:#F3F1ED; --muted:#8B8B92; --gold:#E0B355; --gold-dim:#7A6230;
+  --red:#C0433F; --green:#4E9A6A;
+  --sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Roboto Mono",monospace;
+  --tap:44px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);
+  font-size:16px;line-height:1.45;-webkit-font-smoothing:antialiased;padding-bottom:40px}
+button,input,select{font-family:inherit;font-size:inherit;color:inherit}
+button{cursor:pointer;border:none;background:none}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:4px}
+
+header{border-bottom:1px solid var(--line);padding:16px 18px calc(16px + env(safe-area-inset-top))}
+.mark{font-size:16px;font-weight:700}
+.mark b{display:block;font-size:10px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-family:var(--mono)}
+main{max-width:640px;margin:0 auto;padding:20px 18px 40px}
+h1{font-size:24px;letter-spacing:-.02em;margin:4px 0 18px}
+.eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+.sub{color:var(--muted);font-size:14px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px}
+.panel+.panel{margin-top:10px}
+.field{width:100%;min-height:var(--tap);background:var(--panel2);border:1px solid var(--line);
+  border-radius:10px;padding:12px 14px;font-size:15px;margin-bottom:8px}
+.field.mono{font-family:var(--mono)}
+label.lb{display:block;font-size:12px;color:var(--muted);margin:10px 0 5px}
+.btn{display:block;width:100%;min-height:var(--tap);background:var(--gold);color:#17140C;
+  border-radius:12px;padding:13px 18px;font-weight:700;font-size:16px;text-align:center}
+.btn[disabled]{background:var(--panel2);color:var(--muted);cursor:not-allowed}
+.btn.ghost{background:none;border:1px solid var(--line);color:var(--ink);font-weight:600}
+.btn.danger{background:none;border:1px solid var(--red);color:var(--red);font-weight:600}
+.btn-row{display:flex;gap:10px;margin-top:10px}
+.btn-row .btn{flex:1}
+.bar{height:8px;background:var(--panel2);border-radius:99px;overflow:hidden;margin:12px 0}
+.bar i{display:block;height:100%;background:var(--gold);transition:width .3s ease}
+.stat{display:flex;gap:10px;margin-bottom:14px}
+.stat > div{flex:1;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;text-align:center}
+.stat .n{font-family:var(--mono);font-size:22px;font-weight:600}
+.stat .l{font-size:11px;color:var(--muted);margin-top:4px}
+.note{border:1px solid var(--gold-dim);background:rgba(224,179,85,.07);border-radius:12px;
+  padding:12px 14px;font-size:13px;line-height:1.5;margin-bottom:14px;color:#E8DFCB}
+.note.warn{border-color:var(--red);background:rgba(192,67,63,.08);color:#F0D2D1}
+.note.ok{border-color:var(--green);background:rgba(78,154,106,.08);color:#CFE9D8}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px;margin-top:14px}
+.cell{position:relative;aspect-ratio:1;border-radius:10px;overflow:hidden;background:var(--panel2);
+  border:1px solid var(--line)}
+.cell img{width:100%;height:100%;object-fit:cover;display:block}
+.cell .lbl{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(transparent,rgba(0,0,0,.85));
+  color:#fff;font-size:10px;padding:4px 6px;line-height:1.3}
+.cell .st{position:absolute;top:5px;right:5px;width:16px;height:16px;border-radius:99px;
+  display:grid;place-items:center;font-size:10px;background:var(--panel2);border:1px solid var(--line)}
+.cell .st.wait{color:var(--muted)}
+.cell .st.go{color:var(--gold)}
+.cell .st.ok{background:var(--green);border-color:var(--green);color:#fff}
+.cell .st.err{background:var(--red);border-color:var(--red);color:#fff}
+.list{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-top:10px}
+.item{padding:10px 14px;border-bottom:1px solid var(--line);font-size:13px;color:var(--muted);font-family:var(--mono)}
+.item:last-child{border-bottom:none}
+.item.err{color:#F0A6A3}
+select{width:100%}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head><body>
+<header><div class="mark"><b>Werkzeug</b>Bildgenerator</div></header>
+<main id="app"></main>
+<script>
+const COURSE = [
+{t:"Erste Wörter", ls:[
+  {t:"Hallo sagen", w:[
+    ["Hallo","Shlama"],["Guten Morgen","Sapra brikha"],["Guten Abend","Ramsha brikha"],
+    ["Gute Nacht","Lele brikha"],["Willkommen","B'shena"],["Tschüss","Push b'shena"]]},
+  {t:"Ja, nein, danke", w:[
+    ["ja","he"],["nein","la"],["danke","basima"],["vielen Dank","basima raba"],
+    ["bitte","ba'utha"],["Entschuldigung","shwoq li"]]},
+  {t:"Erste kleine Sätze", s:[
+    ["Wie geht es dir?","Dakhi iwet?"],["Mir geht es gut.","Spay iwan."],
+    ["Und dir?","W'ati?"],["Danke, gut.","Basima, spay."],
+    ["Bis später.","Khazekh basir."]]},
+  {t:"Wiederholung – Kapitel 1", rev:1}
+]},
+
+{t:"Sich vorstellen", ls:[
+  {t:"Wie heißt du?", s:[
+    ["Ich heiße Annette.","Shimi Annette."],["Wie heißt du?","Mo shimokh?"],
+    ["Das ist mein Name.","Aha ile shimi."],["Ich freue mich.","Khdita wan."]]},
+  {t:"Woher kommst du?", s:[
+    ["Ich komme aus Deutschland.","Ana min Almanya wan."],["Woher kommst du?","Min eka iwet?"],
+    ["Ich wohne in Leipzig.","Ana b'Leipzig k'khayan."],["Wo wohnst du?","Eka k'khayet?"]]},
+  {t:"Sprachen", s:[
+    ["Ich spreche Deutsch.","Ana Almanaya k'hamzman."],["Ich lerne Assyrisch.","Ana Sureth k'yalpan."],
+    ["Sprichst du Deutsch?","Almanaya k'hamzmet?"],["Ich verstehe.","K'parman."],
+    ["Ich verstehe nicht.","La k'parman."],["Langsam bitte.","Nikha, ba'utha."],
+    ["Noch einmal, bitte.","Kha ga khita, ba'utha."]]},
+  {t:"Fragewörter", w:[
+    ["wer","mani"],["was","mo"],["wo","eka"],["wann","emat"],
+    ["wie","dakhi"],["warum","qamodi"],["wie viel","kma"]]},
+  {t:"Wiederholung – Kapitel 2", rev:1}
+]},
+
+{t:"Familie", ls:[
+  {t:"Mutter und Vater", w:[
+    ["die Mutter","yimma"],["der Vater","baba"],["die Eltern","baba w yimma"],
+    ["meine Mutter","yimmi"],["mein Vater","babi"]]},
+  {t:"Geschwister und Kinder", w:[
+    ["der Bruder","akhona"],["die Schwester","khatha"],["der Sohn","brona"],
+    ["die Tochter","brata"],["das Kind","yala"],["die Kinder","yale"]]},
+  {t:"Oma, Opa, Verwandte", w:[
+    ["die Oma","nana"],["der Opa","sawa"],["der Onkel","mamo"],["die Tante","khaltha"],
+    ["die Familie","baytutha"],["der Freund","khawra"],["die Freundin","khwarta"]]},
+  {t:"Über die Familie sprechen", s:[
+    ["Das ist meine Familie.","Aya la baytuthi."],["Ich habe einen Bruder.","Ithli kha akhona."],
+    ["Hast du Kinder?","Ithlokh yale?"],["Ich liebe dich.","K'rakhmannokh."],
+    ["Ich habe eine Schwester.","Ithli kha khatha."]]},
+  {t:"Wiederholung – Kapitel 3", rev:1}
+]},
+
+{t:"Zahlen", ls:[
+  {t:"Eins bis fünf", w:[
+    ["eins","kha"],["zwei","tre"],["drei","tlatha"],["vier","arba"],["fünf","khamsha"]]},
+  {t:"Sechs bis zehn", w:[
+    ["sechs","ishta"],["sieben","shawwa"],["acht","tmanya"],["neun","tisha"],["zehn","isra"]]},
+  {t:"Elf bis zwanzig", w:[
+    ["elf","khadassar"],["zwölf","tressar"],["dreizehn","tlattassar"],["vierzehn","arbassar"],
+    ["fünfzehn","khammishar"],["zwanzig","'isri"]]},
+  {t:"Große Zahlen", w:[
+    ["dreißig","tlathi"],["vierzig","arbi"],["fünfzig","khamshi"],["hundert","imma"],["tausend","alpa"]]},
+  {t:"Zahlen benutzen", s:[
+    ["Wie viel kostet das?","Kma ile timma?"],["Ich bin dreißig Jahre alt.","Ithli tlathi shinne."],
+    ["Wie alt bist du?","Kma shinne ithlokh?"],["zwei Kaffee, bitte","tre qahwe, ba'utha"]]},
+  {t:"Wiederholung – Kapitel 4", rev:1}
+]},
+
+{t:"Farben und Eigenschaften", ls:[
+  {t:"Farben", w:[
+    ["rot","smoqa"],["blau","zarqa"],["grün","yaroqa"],["gelb","zarda"],
+    ["schwarz","ukkama"],["weiß","khiwara"]]},
+  {t:"Groß und klein", w:[
+    ["groß","gura"],["klein","zora"],["neu","khatha"],["alt","'atiqa"],
+    ["schön","shapira"],["gut","tawa"],["schlecht","bisha"]]},
+  {t:"Warm und kalt", w:[
+    ["warm","shakhina"],["kalt","qarira"],["viel","raba"],["wenig","basor"],
+    ["schnell","jaldi"],["langsam","nikha"]]},
+  {t:"Wiederholung – Kapitel 5", rev:1}
+]},
+
+{t:"Zeit", ls:[
+  {t:"Heute, morgen, gestern", w:[
+    ["heute","idyom"],["morgen","makhar"],["gestern","tmal"],["jetzt","hadiya"],
+    ["später","basir"],["immer","kul yom"]]},
+  {t:"Tag, Woche, Jahr", w:[
+    ["der Tag","yoma"],["die Nacht","lele"],["die Woche","shawua"],
+    ["der Monat","yarkha"],["das Jahr","shita"],["die Stunde","sha'ta"]]},
+  {t:"Die Wochentage", w:[
+    ["Montag","tren b'shaba"],["Dienstag","tlatha b'shaba"],["Mittwoch","arba b'shaba"],
+    ["Donnerstag","khamsha b'shaba"],["Freitag","'ruwta"],["Samstag","shabta"],["Sonntag","khad b'shaba"]]},
+  {t:"Über Zeit sprechen", s:[
+    ["Wie spät ist es?","Kma la sha'ta?"],["Wir sehen uns morgen.","Khazekh makhar."],
+    ["Ich habe heute Zeit.","Ithli idyom wakhta."],["Bis morgen!","Hal makhar!"]]},
+  {t:"Wiederholung – Kapitel 6", rev:1}
+]},
+
+{t:"Essen und Trinken", ls:[
+  {t:"Auf dem Tisch", w:[
+    ["das Brot","lakhma"],["das Wasser","maya"],["der Tee","chai"],["der Kaffee","qahwa"],
+    ["die Milch","khalwa"],["das Ei","be'tha"]]},
+  {t:"Mehr zu essen", w:[
+    ["das Fleisch","bisra"],["der Reis","rizza"],["der Käse","gupta"],["das Salz","milkha"],
+    ["der Zucker","shakar"],["der Apfel","khabusha"],["das Essen","mekhulta"]]},
+  {t:"Hunger und Durst", s:[
+    ["Ich habe Hunger.","Kpinta wan."],["Ich habe Durst.","Sahitha wan."],
+    ["Ich esse Brot.","Lakhma k'akhlan."],["Ich trinke Tee.","Chai k'shatyan."],
+    ["Das schmeckt gut.","Aha basima ile."]]},
+  {t:"Dialog: im Café", dlg:[
+    ["A","Hallo, guten Morgen!","Shlama, sapra brikha!"],
+    ["B","Guten Morgen. Was möchtest du?","Sapra brikha. Mo k'ba'yet?"],
+    ["A","Einen Kaffee, bitte.","Kha qahwa, ba'utha."],
+    ["B","Mit Zucker?","Im shakar?"],
+    ["A","Ja, danke.","He, basima."],
+    ["B","Bitte sehr.","Ba'utha."]]},
+  {t:"Wiederholung – Kapitel 7", rev:1}
+]},
+
+{t:"Zuhause", ls:[
+  {t:"Das Haus", w:[
+    ["das Haus","bayta"],["die Tür","tar'a"],["das Fenster","kawa"],["der Schlüssel","qlida"],
+    ["das Licht","bahra"],["der Tisch","patora"],["der Stuhl","kursi"]]},
+  {t:"Dinge und Orte", w:[
+    ["das Buch","ktawa"],["das Auto","radhita"],["die Stadt","mdita"],["das Dorf","mata"],
+    ["die Straße","urkha"],["die Schule","madrashta"],["die Arbeit","pulkhana"]]},
+  {t:"Zu Hause sprechen", s:[
+    ["Ich bin zu Hause.","B'bayta wan."],["Wo bist du?","Eka iwet?"],
+    ["Komm her!","Ta lakha!"],["Setz dich.","Tiw."],["Mach die Tür zu.","Skhor tar'a."]]},
+  {t:"Wiederholung – Kapitel 8", rev:1}
+]},
+
+{t:"Körper und Gesundheit", ls:[
+  {t:"Der Körper", w:[
+    ["der Kopf","resha"],["das Auge","'ayna"],["die Hand","ida"],["der Fuß","aqla"],
+    ["das Herz","leba"],["der Mund","puma"],["das Haar","sa'ra"]]},
+  {t:"Wenn es weh tut", s:[
+    ["Ich bin krank.","Mrita wan."],["Mein Kopf tut weh.","Reshi ki'wa."],
+    ["Ich brauche einen Arzt.","Bayan asya."],["Es geht mir nicht gut.","La spay iwan."],
+    ["Gute Besserung!","Basima l'shena!"]]},
+  {t:"Wiederholung – Kapitel 9", rev:1}
+]},
+
+{t:"Wörter für jeden Tag", ls:[
+  {t:"Gehen und kommen", s:[
+    ["Ich gehe.","K'azan."],["Ich komme.","K'atyan."],["Gehen wir!","Sa!"],
+    ["Warte auf mich.","Sni li."],["Ich bin hier.","Lakha wan."]]},
+  {t:"Wollen und können", s:[
+    ["Ich möchte …","K'ba'yan …"],["Ich möchte Wasser.","Maya k'ba'yan."],
+    ["Ich kann das.","K'masyan aha."],["Ich kann nicht.","La k'masyan."],
+    ["Hilf mir bitte.","Hayir li, ba'utha."]]},
+  {t:"Sehen, sagen, wissen", s:[
+    ["Ich sehe dich.","K'khazyannokh."],["Ich weiß.","K'yad'an."],
+    ["Ich weiß nicht.","La k'yad'an."],["Sag es noch einmal.","Mir kha ga khita."],
+    ["Was sagst du?","Mo k'amret?"]]},
+  {t:"Arbeiten und schlafen", s:[
+    ["Ich arbeite heute.","Idyom k'palkhan."],["Ich bin müde.","M'khilta wan."],
+    ["Ich gehe schlafen.","K'azan damkhan."],["Schlaf gut.","Damokh spay."]]},
+  {t:"Wiederholung – Kapitel 10", rev:1}
+]},
+
+{t:"Unterwegs und einkaufen", ls:[
+  {t:"Einkaufen", w:[
+    ["das Geld","zuze"],["der Markt","shuqa"],["der Laden","dukana"],
+    ["teuer","yaqura"],["die Rechnung","khushbana"]]},
+  {t:"Im Laden fragen", s:[
+    ["Was kostet das Brot?","Kma ile timma d'lakhma?"],["Hast du Brot?","Ithlokh lakhma?"],
+    ["Das ist zu teuer.","Aha raba yaqura ile."],["Ich nehme das.","Aha k'shaqlan."],
+    ["Danke, das ist alles.","Basima, aha ile kulle."]]},
+  {t:"Dialog: auf dem Markt", dlg:[
+    ["A","Hallo, haben Sie Äpfel?","Shlama, ithlokh khabushe?"],
+    ["B","Ja, natürlich.","He, hatman."],
+    ["A","Wie viel kostet ein Kilo?","Kma ile timma d'kha kilo?"],
+    ["B","Drei Euro.","Tlatha euro."],
+    ["A","Gut, ich nehme zwei Kilo.","Spay, tre kilo k'shaqlan."],
+    ["B","Bitte sehr. Danke!","Ba'utha. Basima!"]]},
+  {t:"Wiederholung – Kapitel 11", rev:1}
+]},
+
+{t:"Gefühle und Small Talk", ls:[
+  {t:"Wie fühlst du dich?", w:[
+    ["glücklich","khidya"],["müde","m'khilta"],["hungrig","kpinta"],
+    ["durstig","sahitha"],["krank","mrita"],["allein","balkhod"]]},
+  {t:"Nette Sätze", s:[
+    ["Du bist schön.","Shapira iwet."],["Ich bin glücklich.","Khdita wan."],
+    ["Ich denke an dich.","B'khshawi iwet."],["Ich warte auf dich.","K'snyannokh."],
+    ["Mein Herz.","Lebbi."]]},
+  {t:"Small Talk", s:[
+    ["Was machst du?","Mo k'awdhet?"],["Nichts Besonderes.","La midi."],
+    ["Alles gut?","Kulle spay?"],["Alles gut.","Kulle spay."],
+    ["Wir sehen uns.","Khazekh."]]},
+  {t:"Dialog: kurzer Anruf", dlg:[
+    ["A","Hallo, wie geht es dir?","Shlama, dakhi iwet?"],
+    ["B","Gut, danke. Und dir?","Spay, basima. W'ati?"],
+    ["A","Auch gut. Wo bist du?","Ap ana spay. Eka iwet?"],
+    ["B","Ich bin gerade zu Hause.","Hadiya b'bayta wan."],
+    ["A","Gut, bis später!","Spay, khazekh basir!"],
+    ["B","Tschüss!","Push b'shena!"]]},
+  {t:"Wiederholung – Kapitel 12", rev:1}
+]}
+];
+</script>
+<script>
+/* =======================================================================
+   Winziger ZIP-Ersteller ohne Abhängigkeiten (nur "store", unkomprimiert).
+   Reicht für ein paar hundert kleine PNG/JPEG-Dateien locker aus und
+   funktioniert offline, ohne fremde Bibliothek von einem CDN zu laden.
+   ======================================================================= */
+function makeZip(files){                 // files: [{name, bytes:Uint8Array}]
+  const enc = new TextEncoder();
+  const parts = [];                      // lokale Dateiabschnitte
+  const central = [];                    // zentrales Verzeichnis
+  let offset = 0;
+
+  const crcTable = (()=>{
+    const t = new Uint32Array(256);
+    for(let n=0;n<256;n++){
+      let c=n;
+      for(let k=0;k<8;k++) c = c&1 ? (0xEDB88320 ^ (c>>>1)) : (c>>>1);
+      t[n]=c>>>0;
+    }
+    return t;
+  })();
+  const crc32 = buf => {
+    let c=0xFFFFFFFF;
+    for(let i=0;i<buf.length;i++) c = crcTable[(c ^ buf[i]) & 0xFF] ^ (c>>>8);
+    return (c ^ 0xFFFFFFFF) >>> 0;
+  };
+  const u16 = n => new Uint8Array([n&255,(n>>8)&255]);
+  const u32 = n => new Uint8Array([n&255,(n>>8)&255,(n>>16)&255,(n>>24)&255]);
+  const cat = arrs => { const t=new Uint8Array(arrs.reduce((s,a)=>s+a.length,0)); let o=0; arrs.forEach(a=>{t.set(a,o);o+=a.length;}); return t; };
+
+  files.forEach(f=>{
+    const nameB = enc.encode(f.name);
+    const data = f.bytes;
+    const crc = crc32(data);
+    const localHeader = cat([
+      u32(0x04034b50), u16(20), u16(0), u16(0), u16(0), u16(0),
+      u32(crc), u32(data.length), u32(data.length),
+      u16(nameB.length), u16(0)
+    ]);
+    const local = cat([localHeader, nameB, data]);
+    parts.push(local);
+
+    const centralHeader = cat([
+      u32(0x02014b50), u16(20), u16(20), u16(0), u16(0), u16(0), u16(0),
+      u32(crc), u32(data.length), u32(data.length),
+      u16(nameB.length), u16(0), u16(0), u16(0), u16(0), u32(0),
+      u32(offset)
+    ]);
+    central.push(cat([centralHeader, nameB]));
+    offset += local.length;
+  });
+
+  const centralBlob = cat(central);
+  const end = cat([
+    u32(0x06054b50), u16(0), u16(0),
+    u16(files.length), u16(files.length),
+    u32(centralBlob.length), u32(offset), u16(0)
+  ]);
+  return new Blob([cat(parts), centralBlob, end], {type:"application/zip"});
+}
+
+</script>
+<script>
+/* ========================= Wortliste (identisch zur Vokabel-App) ========================= */
+function buildItems(){
+  const out=[];
+  COURSE.forEach((ch,ci)=>ch.ls.forEach((ls,li)=>{
+    const arr = ls.w||ls.s;
+    if(arr) arr.forEach((p,ii)=>out.push({id:`${ci+1}.${li+1}.${ii+1}`,de:p[0],ci,li}));
+    if(ls.dlg) ls.dlg.forEach((p,ii)=>out.push({id:`${ci+1}.${li+1}.${ii+1}`,de:p[1],ci,li}));
+  }));
+  return out;
+}
+const ITEMS = buildItems();
+
+/* ========================= Bild-Prompt ========================= */
+/* Ein Wort wie "Wasser" wird zu einem beschreibenden Bild-Prompt.
+   Ganze Sätze funktionieren als Bildmotiv schlecht, deshalb wird bei
+   längeren Einträgen nur das Kernmotiv verwendet (grobe Heuristik). */
+function toPrompt(de){
+  let motif = de
+    .replace(/^(der|die|das|den|dem|des)\s+/i,"")
+    .replace(/[!?.]+$/,"")
+    .trim();
+  if(motif.split(" ").length>4) motif = motif; // ganze Sätze: Stil trägt die Szene
+  return `Studio Ghibli inspired hand-painted illustration, warm soft pastel colors, `
+       + `whimsical storybook style, gentle lighting, no text, no watermark: ${motif}`;
+}
+
+/* ========================= Werkzeuge ========================= */
+/* ========================= Zwischenspeicher (übersteht Neuladen) ========================= */
+const DB = (()=>{
+  let p;
+  const open = () => p || (p = new Promise((res,rej)=>{
+    const r = indexedDB.open("imggen-cache",1);
+    r.onupgradeneeded = () => { if(!r.result.objectStoreNames.contains("bilder")) r.result.createObjectStore("bilder"); };
+    r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error);
+  }));
+  const tx=(mode,fn)=>open().then(db=>new Promise((res,rej)=>{
+    const t=db.transaction("bilder",mode), req=fn(t.objectStore("bilder"));
+    t.oncomplete=()=>res(req&&req.result); t.onerror=()=>rej(t.error);
+  }));
+  return {
+    set:(k,v)=>tx("readwrite",st=>st.put(v,k)),
+    get:(k)=>tx("readonly",st=>st.get(k)),
+    keys:()=>tx("readonly",st=>st.getAllKeys())
+  };
+})();
+async function loadCache(){
+  try{
+    const keys = await DB.keys() || [];
+    for(const id of keys){
+      const bytes = await DB.get(id);
+      if(bytes){
+        const blob = new Blob([bytes], {type:"image/jpeg"});
+        S.images[id] = { bytes, url: URL.createObjectURL(blob) };
+      }
+    }
+  }catch(e){ /* kein IndexedDB verfügbar — läuft trotzdem, nur ohne Wiederherstellung */ }
+}
+
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+const S = {
+  workerUrl: localStorage.getItem("imggen_url")||"",
+  key: localStorage.getItem("imggen_key")||"",
+  running:false, paused:false, i:0,
+  images:{},          // id -> {bytes:Uint8Array, url:string}
+  errors:{},          // id -> Fehlertext
+  filterCh: 0
+};
+
+function scope(){
+  return S.filterCh===0 ? ITEMS : ITEMS.filter(it=>it.ci===S.filterCh-1);
+}
+function doneCount(){ return Object.keys(S.images).length; }
+function errCount(){ return Object.keys(S.errors).length; }
+
+/* ========================= Bildabruf über den Worker ========================= */
+async function fetchOne(item, attempt=1){
+  const res = await fetch(S.workerUrl, {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({ key:S.key, prompt: toPrompt(item.de) })
+  });
+  if(res.status===429 && attempt<4){        // Rate-Limit: kurz warten, erneut versuchen
+    await sleep(3000*attempt);
+    return fetchOne(item, attempt+1);
+  }
+  let data;
+  try{ data = await res.json(); }
+  catch(e){ throw new Error("Antwort nicht lesbar (Status "+res.status+")"); }
+  if(!res.ok) throw new Error(data.error || ("Serverfehler "+res.status));
+  if(!data.image) throw new Error("Keine Bilddaten erhalten.");
+  const bin = atob(data.image);
+  const bytes = new Uint8Array(bin.length);
+  for(let i=0;i<bin.length;i++) bytes[i]=bin.charCodeAt(i);
+  return bytes;
+}
+
+async function runBatch(){
+  if(S.running) return;
+  if(!S.workerUrl || !S.key){ toast("Bitte zuerst Worker-Adresse und Passwort eintragen."); return; }
+  S.running=true; S.paused=false; repaint();
+  const list = scope().filter(it=>!S.images[it.id]);
+  for(const item of list){
+    if(S.paused) break;
+    try{
+      const bytes = await fetchOne(item);
+      const blob = new Blob([bytes], {type:"image/jpeg"});
+      S.images[item.id] = { bytes, url: URL.createObjectURL(blob) };
+      delete S.errors[item.id];
+      DB.set(item.id, bytes).catch(()=>{});
+    }catch(e){
+      S.errors[item.id] = e.message || String(e);
+    }
+    repaint();
+    await sleep(250);   // kleine Pause, damit die Oberfläche flüssig bleibt
+  }
+  S.running=false; repaint();
+  if(!S.paused) toast("Durchlauf fertig.");
+}
+function pauseBatch(){ S.paused=true; }
+const sleep = ms => new Promise(r=>setTimeout(r,ms));
+
+let toastTimer=null;
+function toast(msg){
+  const el = $("#toast");
+  if(!el) return;
+  el.textContent=msg; el.style.display="block";
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>{el.style.display="none";},4000);
+}
+
+/* ========================= ZIP-Export ========================= */
+function exportZip(){
+  const files = Object.entries(S.images).map(([id,v])=>({name:id+".jpg", bytes:v.bytes}));
+  if(!files.length){ toast("Noch keine Bilder vorhanden."); return; }
+  const blob = makeZip(files);
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob); a.download="vokabel-bilder.zip"; a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),4000);
+}
+
+/* ========================= Oberfläche ========================= */
+function repaint(){
+  const list = scope();
+  const done = list.filter(it=>S.images[it.id]).length;
+  const err  = list.filter(it=>S.errors[it.id]).length;
+  const pct  = Math.round(done/list.length*100) || 0;
+
+  $("#app").innerHTML = `
+    <div class="eyebrow">Adminwerkzeug</div>
+    <h1>Bilder für alle Vokabeln</h1>
+
+    <div class="panel">
+      <label class="lb">Worker-Adresse</label>
+      <input class="field mono" id="url" placeholder="https://dein-worker.workers.dev" value="${esc(S.workerUrl)}">
+      <label class="lb">Passwort (aus dem Worker-Code)</label>
+      <input class="field mono" id="key" type="password" value="${esc(S.key)}">
+      <button class="btn ghost" id="save">Speichern</button>
+    </div>
+
+    <div class="stat">
+      <div><div class="n">${done}/${list.length}</div><div class="l">erzeugt</div></div>
+      <div><div class="n">${err}</div><div class="l">Fehler</div></div>
+      <div><div class="n">${pct}%</div><div class="l">Fortschritt</div></div>
+    </div>
+    <div class="bar"><i style="width:${pct}%"></i></div>
+
+    <label class="lb">Kapitel eingrenzen</label>
+    <select class="field" id="filt">
+      <option value="0" ${S.filterCh===0?"selected":""}>Alle Kapitel</option>
+      ${COURSE.map((c,i)=>`<option value="${i+1}" ${S.filterCh===i+1?"selected":""}>${esc(c.t)}</option>`).join("")}
+    </select>
+
+    <div class="btn-row">
+      <button class="btn" id="run" ${S.running?"disabled":""}>${S.running?"Läuft …":"Bilder generieren"}</button>
+      <button class="btn ghost" id="pause" ${S.running?"":"disabled"}>Pause</button>
+    </div>
+    <div class="btn-row">
+      <button class="btn ghost" id="zip">Als ZIP herunterladen</button>
+      <button class="btn danger" id="reset">Fehlgeschlagene erneut versuchen</button>
+    </div>
+
+    <div id="toast" class="note warn" style="display:none"></div>
+
+    ${err ? `<h2 style="margin-top:22px;font-size:14px;color:var(--muted)">Fehler</h2>
+      <div class="list">${list.filter(it=>S.errors[it.id]).slice(0,30).map(it=>
+        `<div class="item err">${esc(it.id)} — ${esc(it.de)} — ${esc(S.errors[it.id])}</div>`).join("")}</div>` : ""}
+
+    <h2 style="margin-top:22px;font-size:14px;color:var(--muted)">Vorschau</h2>
+    <div class="grid">${list.slice(0,240).map(it=>{
+      const img=S.images[it.id], er=S.errors[it.id];
+      const st = img?"ok":(er?"err":"wait");
+      return `<div class="cell">
+        ${img?`<img src="${img.url}" loading="lazy">`:""}
+        <span class="st ${st}">${img?"✓":(er?"!":"·")}</span>
+        <span class="lbl">${esc(it.de)}</span>
+      </div>`;
+    }).join("")}</div>
+  `;
+
+  $("#save").onclick=()=>{
+    S.workerUrl=$("#url").value.trim(); S.key=$("#key").value;
+    localStorage.setItem("imggen_url",S.workerUrl);
+    localStorage.setItem("imggen_key",S.key);
+    toast("Gespeichert.");
+  };
+  $("#filt").onchange=e=>{ S.filterCh=+e.target.value; repaint(); };
+  $("#run").onclick=runBatch;
+  $("#pause").onclick=pauseBatch;
+  $("#zip").onclick=exportZip;
+  $("#reset").onclick=()=>{ S.errors={}; toast("Fehlerliste geleert — nochmal auf „Bilder generieren“ tippen."); repaint(); };
+}
+
+repaint();
+loadCache().then(repaint);
+</script>
+</body></html>
